@@ -19,16 +19,18 @@ public class CalendarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
 
+        calendarView = findViewById(R.id.calendarView);
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
 
                 Calendar calendar = Calendar.getInstance();
+                calendar.set(year, month, dayOfMonth);
                 int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
                 switch(dayOfWeek) {
                     case Calendar.SATURDAY:
                     case Calendar.SUNDAY:
-                        Toast.makeText(getApplicationContext(), "주말은 예약하실 수 없습니다!", Toast.LENGTH_SHORT);
+                        Toast.makeText(getApplicationContext(), "주말은 예약하실 수 없습니다!", Toast.LENGTH_SHORT).show();
                         return;
                     default: break;
                 }

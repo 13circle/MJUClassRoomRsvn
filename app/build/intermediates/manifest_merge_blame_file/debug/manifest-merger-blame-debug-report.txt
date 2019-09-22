@@ -11,7 +11,7 @@
 9-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml
 10
 11    <application
-11-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:5:5-19:19
+11-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:5:5-20:19
 12        android:allowBackup="true"
 12-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:6:9-35
 13        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
@@ -25,22 +25,26 @@
 17-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:9:9-54
 18        android:supportsRtl="true"
 18-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:10:9-35
-19        android:theme="@style/AppTheme" >
-19-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:11:9-40
-20        <activity android:name="com.example.mjuclassroomrsvn.MainActivity" >
-20-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:12:9-18:20
-20-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:12:19-47
-21            <intent-filter>
-21-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:13:13-17:29
-22                <action android:name="android.intent.action.MAIN" />
-22-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:14:17-69
-22-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:14:25-66
-23
-24                <category android:name="android.intent.category.LAUNCHER" />
-24-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:16:17-77
-24-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:16:27-74
-25            </intent-filter>
-26        </activity>
-27    </application>
-28
-29</manifest>
+19        android:testOnly="true"
+20        android:theme="@style/AppTheme" >
+20-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:11:9-40
+21        <activity android:name="com.example.mjuclassroomrsvn.MainActivity" >
+21-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:12:9-18:20
+21-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:12:19-47
+22            <intent-filter>
+22-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:13:13-17:29
+23                <action android:name="android.intent.action.MAIN" />
+23-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:14:17-69
+23-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:14:25-66
+24
+25                <category android:name="android.intent.category.LAUNCHER" />
+25-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:16:17-77
+25-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:16:27-74
+26            </intent-filter>
+27        </activity>
+28        <activity android:name="com.example.mjuclassroomrsvn.CalendarActivity" />
+28-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:19:9-63
+28-->C:\Users\USER\AndroidStudioProjects\MJUClassRoomRsvn\app\src\main\AndroidManifest.xml:19:19-51
+29    </application>
+30
+31</manifest>
