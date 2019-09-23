@@ -54,10 +54,9 @@ public class CalendarActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 v.setSelected(event.getAction()==MotionEvent.ACTION_DOWN);
                 Calendar cal = Calendar.getInstance();
-                String[] yrMth = ((String)monthBanner.getText()).split(".");
+                String[] yrMth = ((String)monthBanner.getText()).split(". ");
                 cal.set(Calendar.YEAR, Integer.valueOf(yrMth[0]));
-                cal.set(Calendar.MONTH, Integer.valueOf(yrMth[1]));
-                cal.add(Calendar.MONTH, -1);
+                cal.set(Calendar.MONTH, Integer.valueOf(yrMth[1]) - 1);
                 setMonthCalendar(cal);
                 return true;
             }
@@ -85,8 +84,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         yr = cal.get(Calendar.YEAR);
         mth = cal.get(Calendar.MONTH);
-        monthBanner.setText(yr + "." + (mth + 1));
-        Toast.makeText(getApplicationContext(), cal.get(Calendar.YEAR) + "/" + cal.get(Calendar.MONTH), Toast.LENGTH_SHORT).show();
+        monthBanner.setText(yr + ". " + (mth + 1));
         dMax = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
         cal.set(Calendar.DAY_OF_MONTH, 1);
         j = cal.get(Calendar.DAY_OF_WEEK) - 1;
@@ -117,11 +115,18 @@ public class CalendarActivity extends AppCompatActivity {
             tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    switch(j) {
+                        case 0:
+                        case 6:
+                            Toast.makeText(getApplicationContext(), "주말은 예약할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                            return;
+                        default: break;
+                    }
+                    TableRow tr = (TableRow) calendarTable.getChildAt(row);
+                    TextView td = (TextView) tr.getChildAt(column);
                     tv.setBackgroundColor(Color.rgb(175, 177, 179));
                     tv.setTypeface(Typeface.DEFAULT_BOLD);
                     if(isClicked) {
-                        TableRow tr = (TableRow) calendarTable.getChildAt(row);
-                        TextView td = (TextView) tr.getChildAt(column);
                         td.setBackgroundColor(Color.rgb(138, 182, 225));
                         td.setTypeface(Typeface.DEFAULT);
                         if((row == i) && (column == j)) isClicked = false;
