@@ -424,6 +424,7 @@ color material_grey_600
 color material_grey_800
 color material_grey_850
 color material_grey_900
+color monthBannerColor
 color notification_action_color_filter
 color notification_icon_bg_color
 color primary_dark_material_dark
@@ -651,6 +652,12 @@ drawable abc_textfield_search_activated_mtrl_alpha
 drawable abc_textfield_search_default_mtrl_alpha
 drawable abc_textfield_search_material
 drawable abc_vector_test
+drawable arrow_left_default
+drawable arrow_left_pressed
+drawable arrow_left_selector
+drawable arrow_right_default
+drawable arrow_right_pressed
+drawable arrow_right_selector
 drawable btn_checkbox_checked_mtrl
 drawable btn_checkbox_checked_to_unchecked_mtrl_animation
 drawable btn_checkbox_unchecked_mtrl
@@ -736,13 +743,15 @@ id activity_chooser_view_content
 id add
 id alertTitle
 id always
+id arrowLeft
+id arrowRight
 id async
 id barrier
 id beginning
 id blocking
 id bottom
 id buttonPanel
-id calendarView
+id calendarTable
 id center_vertical
 id chains
 id checkbox
@@ -783,6 +792,7 @@ id listMode
 id list_item
 id message
 id middle
+id monthBanner
 id multiply
 id never
 id none

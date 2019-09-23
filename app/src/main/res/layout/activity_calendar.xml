@@ -1,12 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical">
 
-    <CalendarView
-        android:id="@+id/calendarView"
+    <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
+        android:shrinkColumns="*">
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/arrowLeft"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                app:srcCompat="@drawable/arrow_left_selector"
+                android:background="@color/monthBannerColor"/>
+
+            <TextView
+                android:id="@+id/monthBanner"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:background="@color/monthBannerColor"
+                android:gravity="center"
+                android:textColor="#fff"
+                android:textSize="25sp"></TextView>
+
+            <ImageView
+                android:id="@+id/arrowRight"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                app:srcCompat="@drawable/arrow_right_selector"
+                android:background="@color/monthBannerColor"/>
+
+        </TableRow>
+
+    </TableLayout>
+
+    <TableLayout
+        android:id="@+id/calendarTable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#8AB6E1"
+        android:stretchColumns="*">
+
+    </TableLayout>
+
 </LinearLayout>
