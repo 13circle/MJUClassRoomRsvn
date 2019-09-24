@@ -1,0 +1,4 @@
+#Tue Sep 24 12:39:50 KST 2019
+base.0=C\:\\Users\\SONGJUNGMIN\\AndroidStudioProjects\\StartUI\\app\\build\\intermediates\\dex\\debug\\mergeDexDebug\\out\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

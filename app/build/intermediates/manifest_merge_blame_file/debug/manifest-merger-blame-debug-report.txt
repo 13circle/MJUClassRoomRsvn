@@ -1,0 +1,50 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.techtown.startui"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="15"
+8-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml
+9        android:targetSdkVersion="28" />
+9-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml
+10
+11    <application
+11-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml:5:5-20:19
+12        android:allowBackup="true"
+12-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml:6:9-35
+13        android:appComponentFactory="android.support.v4.app.CoreComponentFactory"
+13-->[com.android.support:support-compat:28.0.0] C:\Users\SONGJUNGMIN\.gradle\caches\transforms-2\files-2.1\dd1cf78f22bdd94f550130b281f27c97\support-compat-28.0.0\AndroidManifest.xml:22:18-91
+14        android:debuggable="true"
+15        android:icon="@mipmap/ic_launcher"
+15-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml:7:9-43
+16        android:label="@string/app_name"
+16-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml:8:9-41
+17        android:roundIcon="@mipmap/ic_launcher_round"
+17-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml:9:9-54
+18        android:supportsRtl="true"
+18-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml:10:9-35
+19        android:testOnly="true"
+20        android:theme="@style/Theme.AppCompat.NoActionBar" >
+20-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml:11:9-59
+21        <activity android:name="com.techtown.startui.next" />
+21-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml:12:9-51
+21-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml:12:19-39
+22        <activity android:name="com.techtown.startui.MainActivity" >
+22-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml:13:9-19:20
+22-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml:13:19-47
+23            <intent-filter>
+23-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml:14:13-18:29
+24                <action android:name="android.intent.action.MAIN" />
+24-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml:15:17-69
+24-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml:15:25-66
+25
+26                <category android:name="android.intent.category.LAUNCHER" />
+26-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml:17:17-77
+26-->C:\Users\SONGJUNGMIN\AndroidStudioProjects\StartUI\app\src\main\AndroidManifest.xml:17:27-74
+27            </intent-filter>
+28        </activity>
+29    </application>
+30
+31</manifest>
