@@ -96,18 +96,28 @@ public class CalendarActivity extends AppCompatActivity {
 
     }
 
-    private int[] getBannerMth() {
+    private Calendar getBannerMth() {
 
-        int[] tempArr = new int[2];
+        Calendar cal = Calendar.getInstance();
 
         String txt = mth_banner.getText().toString();
         txt = txt.substring(0, txt.indexOf("월"));
         String[] txts = txt.split("년 ");
 
-        tempArr[0] = Integer.valueOf(txts[0]);
-        tempArr[1] = Integer.valueOf(txts[1]);
+        cal.set(Calendar.YEAR, Integer.valueOf(txts[0]));
+	cal.set(Calendar.MONTH, Integer.valueOf(txts[1]) - 1);
 
-        return tempArr;
+        return cal;
+
+    }
+
+    private void serBannerMonth(Calendar cal) {
+    
+        int yr = get(Calendar.YEAR);
+	int mth = get(Calendar.MONTH) + 1;
+
+	CharSequence txt = yr + ""
+	mth_banner.setText(yr + "년 " + mth + "월");
 
     }
 
@@ -125,6 +135,9 @@ public class CalendarActivity extends AppCompatActivity {
     private void moveMonth(int addMth) {
 
         // TODO: Display month in mth_banner
+	
+	Calendar cal = Calendar.getInstance();
+	int 
 
     }
 
@@ -132,7 +145,7 @@ public class CalendarActivity extends AppCompatActivity {
     /* TODO: <1> Date Movement Funcs
      * [1] private void moveMonth(int addMth)
      * [2] private void setBannerMthCurrent() - DONE
-     * [3] private int[] getBannerMth()
+     * [3] private int[] getBannerMth() - DONE
      * [4] private void setBannerMth(Calendar cal) - DONE
      * [5] private int[] getFirstLastDate(Calendar cal) - DONE
      * [6] private void colorCurrentDate()
