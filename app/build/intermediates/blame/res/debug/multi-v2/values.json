@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\ICUNIX\\StudioProjects\\MJUClassRoomRsvn\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values\\values.xml",
+            "outputFile": "C:\\Users\\ICUNIX\\AndroidStudioProjects\\TEMP\\MJUClassRoomRsvn\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values\\values.xml",
             "map": [
                 {
                     "source": "C:\\Users\\ICUNIX\\.gradle\\caches\\transforms-2\\files-2.1\\37ec02f661e3547c5499ecdfd9f3cd1f\\appcompat-1.1.0\\res\\values\\values.xml",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\ICUNIX\\StudioProjects\\MJUClassRoomRsvn\\app\\src\\main\\res\\values\\strings.xml",
+                    "source": "C:\\Users\\ICUNIX\\AndroidStudioProjects\\TEMP\\MJUClassRoomRsvn\\app\\src\\main\\res\\values\\strings.xml",
                     "from": {
                         "startLines": "1",
                         "startColumns": "4",
@@ -37,23 +37,6 @@
                         "startOffsets": "24089",
                         "endColumns": "53",
                         "endOffsets": "24138"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\ICUNIX\\StudioProjects\\MJUClassRoomRsvn\\app\\src\\main\\res\\values\\colors.xml",
-                    "from": {
-                        "startLines": "4,2,3,5",
-                        "startColumns": "4,4,4,4",
-                        "startOffsets": "157,57,105,204",
-                        "endColumns": "45,46,50,50",
-                        "endOffsets": "198,99,151,250"
-                    },
-                    "to": {
-                        "startLines": "152,153,154,177",
-                        "startColumns": "4,4,4,4",
-                        "startOffsets": "7643,7689,7736,9140",
-                        "endColumns": "45,46,50,50",
-                        "endOffsets": "7684,7731,7782,9186"
                     }
                 },
                 {
@@ -73,6 +56,23 @@
                         "endLines": "2,10,11,12,13,14,19,22,23,24,27,28,31,34,35,36,37,38,41,44,45,46,47,52,55,58,59,60,65,66,67,70,73,74,77,80,83,86,87,90,93,94,99,100,105,108,111,112,113,114,115,116,117,118,119,120,129,2665,2666,2667,2805",
                         "endColumns": "60,11,47,51,60,45,11,60,59,69,11,67,11,11,61,64,67,66,11,11,66,64,64,11,11,11,65,66,11,68,65,11,11,66,11,11,11,11,64,11,11,64,11,66,11,11,11,64,61,61,61,58,59,60,60,58,11,2575,131,3263,107",
                         "endOffsets": "161,452,500,552,613,659,841,996,1056,1126,1259,1327,1456,1582,1644,1709,1777,1844,1967,2092,2159,2224,2289,2470,2591,2712,2778,2845,3055,3124,3190,3315,3441,3508,3634,3761,3886,4013,4078,4204,4327,4392,4600,4667,4847,4967,5087,5152,5214,5276,5338,5397,5457,5518,5579,5638,6013,170694,170826,174090,182339"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\ICUNIX\\AndroidStudioProjects\\TEMP\\MJUClassRoomRsvn\\app\\src\\main\\res\\values\\colors.xml",
+                    "from": {
+                        "startLines": "4,2,3,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "157,57,105,204",
+                        "endColumns": "45,46,50,50",
+                        "endOffsets": "198,99,151,250"
+                    },
+                    "to": {
+                        "startLines": "152,153,154,177",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "7643,7689,7736,9140",
+                        "endColumns": "45,46,50,50",
+                        "endOffsets": "7684,7731,7782,9186"
                     }
                 },
                 {
@@ -114,7 +114,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\ICUNIX\\StudioProjects\\MJUClassRoomRsvn\\app\\src\\main\\res\\values\\styles.xml",
+                    "source": "C:\\Users\\ICUNIX\\AndroidStudioProjects\\TEMP\\MJUClassRoomRsvn\\app\\src\\main\\res\\values\\styles.xml",
                     "from": {
                         "startLines": "3",
                         "startColumns": "4",
