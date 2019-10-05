@@ -9,10 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".LogInActivity"></activity>
-        <activity android:name=".TimeTableActivity"></activity>
-        <activity android:name=".CalendarActivity"></activity>
-        <activity android:name=".next"></activity>
+
+        <activity android:name=".mypage"></activity>
+        <activity android:name=".TimeTableActivity" />
+        <activity android:name=".CalendarActivity" />
+        <activity android:name=".next" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
