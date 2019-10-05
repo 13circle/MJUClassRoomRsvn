@@ -13,6 +13,7 @@
         <activity android:name=".mypage"></activity>
         <activity android:name=".TimeTableActivity" />
         <activity android:name=".CalendarActivity" />
+        <activity android:name=".LogInActivity" />
         <activity android:name=".next" />
         <activity android:name=".MainActivity">
             <intent-filter>
