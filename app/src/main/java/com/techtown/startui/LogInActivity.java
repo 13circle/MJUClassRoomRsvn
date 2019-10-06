@@ -9,14 +9,17 @@ import android.widget.EditText;
 
 public class LogInActivity extends AppCompatActivity {
 
+    EditText login_id, login_pw;
+    Button login_submit;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        final EditText login_id = findViewById(R.id.login_id);
-        final EditText login_pw = findViewById(R.id.login_pw);
-        final Button login_submit = findViewById(R.id.login_submit);
+        login_id = findViewById(R.id.login_id);
+        login_pw = findViewById(R.id.login_pw);
+        login_submit = findViewById(R.id.login_submit);
 
         login_submit.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -39,22 +39,62 @@ import java.util.Calendar;
 @SuppressWarnings("serial")
 public class ClassRoomData implements Serializable {
 
+    private String userId;      // 사용자 계정 아이디
+    private String userPw;      // 사용자 계정 비밀번호
+
     private Calendar calendar;   // 날짜 정보 전달을 위한 Java 기본 달력 객체
 
+    private String classRoom;    // 예약 강의실 번호
+    private long startTime;      // 이용 시작 시간
+    private long endTime;        // 이용 종료 시간
+    private String usage;        // 대여 사유
+
+
     /* 생성자 */
-    public ClassRoomData() {
-        // 기본 생성자
+    public ClassRoomData() {                                                    // 기본 생성자
+        this.userId = "";
+        this.userPw = "";
+
+        this.calendar = null;
+
+        this.classRoom = "";
+        this.startTime = 0;
+        this.endTime = 0;
+        this.usage = "";
     }
-    public ClassRoomData(Calendar calendar) { this.calendar = calendar; }       // 달력 객체 초기화
+    public ClassRoomData(String userId, String userPw) {                      // 사용자 계정 정보 초기화 생성자
+        this.userId = userId;
+        this.userPw = userPw;
+    }
+    public ClassRoomData(Calendar calendar) { this.calendar = calendar; }       // 달력 객체 초기화 생성자
+
+
+    /* 사용자 계정 관련 메소드 */
+    public String getUserId() { return userId; }                                // 사용자 계정 아이디 반환
+    public void setUserId(String userId) { this.userId = userId; }              // 사용자 계정 아이디 설정
+    public String getUserPw() { return userPw; }                                // 사용자 계정 비밀번호 반환
+    public void setUserPw(String userPw) { this.userPw = userPw; }              // 사용자 계정 비밀번호 설정
+
+
+    /* 예약 정보 관련 메소드 */
+    public String getClassRoom() { return classRoom; }                          // 예약 강의실 번호 반환
+    public void setClassRoom(String classRoom) { this.classRoom = classRoom; }  // 예약 강의실 번호 설정
+    public long getStartTime() { return startTime; }                            // 이용 시작 시간 반환
+    public void setStartTime(long startTime) { this.startTime = startTime; }    // 이용 시작 시간 설정
+    public long getEndTime() { return endTime; }                                // 이용 종료 시간 반환
+    public void setEndTime(long endTime) { this.endTime = endTime; }            // 이용 종료 시간 설정
+    public String getUsage() { return usage; }                                  // 대여 사유 반환
+    public void setUsage(String usage) { this.usage = usage; }                  // 대여 사유 설정
+
 
     /* 달력 관련 메소드 */
     public void setCalendar(Calendar calendar) { this.calendar = calendar; }    // 달력 객체 설정
     public Calendar getCalendar() { return calendar; }                          // 달력 객체 반환
-    public int getYear() { return calendar.get(Calendar.YEAR); }               // 해당 연도 반환
-    public int getMonth() { return calendar.get(Calendar.MONTH); }             // 해당 월 반환 (범위가 0 ~ 11 이므로 +1 한 값이 실제 월 값이다.)
-    public int getDate() { return calendar.get(Calendar.DAY_OF_MONTH); }      // 해당 일 반환
-    public int getWeekDay() { return calendar.get(Calendar.DAY_OF_WEEK); }    // 해당 요일 반환 (1 ~ 7 사이 정수로 반환)
-    public String getWeekDayKor() {                                                // 해당 요일을 한글로 반환
+    public int getYear() { return calendar.get(Calendar.YEAR); }                // 해당 연도 반환
+    public int getMonth() { return calendar.get(Calendar.MONTH); }              // 해당 월 반환 (범위가 0 ~ 11 이므로 +1 한 값이 실제 월 값이다.)
+    public int getDate() { return calendar.get(Calendar.DAY_OF_MONTH); }        // 해당 일 반환
+    public int getWeekDay() { return calendar.get(Calendar.DAY_OF_WEEK); }      // 해당 요일 반환 (1 ~ 7 사이 정수로 반환)
+    public String getWeekDayKor() {                                             // 해당 요일을 한글로 반환
         String wkDayStr = null;
         switch (getWeekDay()) {
             case 1: wkDayStr = "일"; break; case 2: wkDayStr = "월"; break;

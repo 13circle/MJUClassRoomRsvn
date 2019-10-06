@@ -15,44 +15,6 @@ import org.w3c.dom.Text;
 
 import java.util.Calendar;
 
-class MyDateObj {
-
-    private Calendar cal;
-    private int year;
-    private int month;
-    private int firstDayOfWeek;
-    private int lastDayOfMonth;
-
-    MyDateObj() {
-
-        this.cal = Calendar.getInstance();
-        setMyDateObj(this.cal.get(Calendar.YEAR), this.cal.get(Calendar.MONTH));
-
-    }
-
-    void setCalendarDayOfMth(int dayOfMth) { this.cal.set(Calendar.DAY_OF_MONTH, dayOfMth); }
-
-    Calendar getCalendar() { return this.cal; }
-
-    int getFirstDayOfWeek() { return this.firstDayOfWeek; }
-
-    int getLastDayOfMonth() { return this.lastDayOfMonth; }
-
-    void addMonth(int incr) { if(incr != 0) setMyDateObj(this.year, this.month + incr); }
-
-    private void setMyDateObj(int yr, int mth) {
-
-        this.cal.set(Calendar.YEAR, this.year = yr);
-        this.cal.set(Calendar.MONTH, this.month = mth);
-        this.cal.set(Calendar.DAY_OF_MONTH, 1);
-
-        this.firstDayOfWeek = this.cal.get(Calendar.DAY_OF_WEEK);
-        this.lastDayOfMonth = this.cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-
-    }
-
-}
-
 public class CalendarActivity extends AppCompatActivity {
 
     Calendar calendar;

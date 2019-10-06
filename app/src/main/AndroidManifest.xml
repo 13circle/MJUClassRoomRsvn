@@ -14,7 +14,6 @@
         <activity android:name=".TimeTableActivity" />
         <activity android:name=".CalendarActivity" />
         <activity android:name=".LogInActivity" />
-        <activity android:name=".next" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
