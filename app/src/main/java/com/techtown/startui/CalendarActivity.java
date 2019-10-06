@@ -23,22 +23,22 @@ class MyDateObj {
     private int firstDayOfWeek;
     private int lastDayOfMonth;
 
-    public MyDateObj() {
+    MyDateObj() {
 
         this.cal = Calendar.getInstance();
         setMyDateObj(this.cal.get(Calendar.YEAR), this.cal.get(Calendar.MONTH));
 
     }
 
-    public void setCalendar(int yr, int mth) { setMyDateObj(yr, mth); }
+    void setCalendarDayOfMth(int dayOfMth) { this.cal.set(Calendar.DAY_OF_MONTH, dayOfMth); }
 
-    public Calendar getCalendar() { return this.cal; }
+    Calendar getCalendar() { return this.cal; }
 
-    public int getFirstDayOfWeek() { return this.firstDayOfWeek; }
+    int getFirstDayOfWeek() { return this.firstDayOfWeek; }
 
-    public int getLastDayOfMonth() { return this.lastDayOfMonth; }
+    int getLastDayOfMonth() { return this.lastDayOfMonth; }
 
-    public void addMonth(int incr) { if(incr != 0) setMyDateObj(this.year, this.month + incr); }
+    void addMonth(int incr) { if(incr != 0) setMyDateObj(this.year, this.month + incr); }
 
     private void setMyDateObj(int yr, int mth) {
 
@@ -101,10 +101,7 @@ public class CalendarActivity extends AppCompatActivity {
 
                         if(mthDateStr.length() > 0) {
 
-                            int mthDate = Integer.valueOf(mthDateStr);
-
-                            Toast.makeText(getApplicationContext(), String.valueOf(mthDate), Toast.LENGTH_SHORT).show();
-                            // TODO: Move to TimeTableActivity using Intent class passing Serializable class.
+                            mdo.setCalendarDayOfMth(Integer.valueOf(mthDateStr));
 
                             ClassRoomData classRoomData = new ClassRoomData(mdo.getCalendar());
                             Intent intent = new Intent(getApplicationContext(), TimeTableActivity.class);
