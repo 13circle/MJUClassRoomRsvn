@@ -85,7 +85,7 @@ public class CalendarActivity extends AppCompatActivity {
                 TextView tv = new TextView(this);
                 tv.setWidth(100);
                 tv.setPadding(10, 0, 0, 0);
-                tv.setTextColor(Color.rgb(0, 0, 255));
+                tv.setTextColor(Color.rgb(255, 255, 255));
                 tv.setText("");
 
                 cal_date.addView(tv);

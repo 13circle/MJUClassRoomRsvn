@@ -71,6 +71,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
+                android:background="@drawable/button_selector_white"
+                android:textColor="#000"
                 android:layout_span="2"
                 android:text="LOGIN" />
         </TableRow>

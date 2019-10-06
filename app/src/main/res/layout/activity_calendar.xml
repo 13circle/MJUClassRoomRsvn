@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <TableRow
-            android:background="#0000CC">
+            android:background="@color/colorPrimaryDark">
             <TextView
                 android:id="@+id/prev_month"
                 android:layout_width="wrap_content"
@@ -20,12 +20,14 @@
                 android:text="&lt;"
                 android:textSize="30sp"
                 android:gravity="center"
+                android:textColor="#fff"
                 android:layout_span="2" />
             <TextView
                 android:id="@+id/mth_banner"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="XXXX년 XX월"
+                android:textColor="#fff"
                 android:textSize="15sp"
                 android:gravity="center"
                 android:layout_span="3" />
@@ -34,6 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="&gt;"
+                android:textColor="#fff"
                 android:textSize="30sp"
                 android:gravity="center"
                 android:layout_span="2" />
