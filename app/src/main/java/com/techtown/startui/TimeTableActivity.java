@@ -30,7 +30,7 @@ public class TimeTableActivity extends AppCompatActivity {
         Intent intent = getIntent();
         ClassRoomData CRdata = (ClassRoomData)intent.getSerializableExtra("classRoomData");
 
-        time_table_banner.setText(CRdata.getYear() + "년 " + (CRdata.getMonth() + 1) + "월 " + CRdata.getDate() + "일 예약현황");
+        time_table_banner.setText(CRdata.getYear() + "년 " + (CRdata.getMonth() + 1) + "월 " + CRdata.getDate() + "일");
 
         final int init_hr = 9;
         final int fin_hr = 20;
