@@ -10,13 +10,17 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.DataOutput;
 import java.util.ArrayList;
 
 public class TimeTableActivity extends AppCompatActivity {
 
     TableLayout time_table;
     ArrayList<TextView> selectedCells;
+    Boolean isAllSelected;
+    int prev_i, prev_j;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,6 +39,8 @@ public class TimeTableActivity extends AppCompatActivity {
         final int init_hr = 9;
         final int fin_hr = 20;
 
+        prev_i = prev_j = 0; isAllSelected = false;
+
         for(int i = 1, hr = init_hr, clen = ((TableRow)time_table.getChildAt(0)).getChildCount(); hr < fin_hr; hr++, i++) {
 
             TableRow tr = new TableRow(this);
@@ -51,24 +57,43 @@ public class TimeTableActivity extends AppCompatActivity {
                 tv = new TextView(this);
                 tv.setBackgroundDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.table_cell_background, null));
                 tv.setGravity(Gravity.CENTER); tv.setClickable(true);
-                tv.setTag("time_table:" + i + "," + j + ":false");
+                tv.setTag("time_table:" + i + "," + j);
                 tv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         String indexStr = view.getTag().toString();
-                        Boolean isSelected = Boolean.valueOf(indexStr.substring(indexStr.lastIndexOf(":") + 1));
-                        indexStr = indexStr.substring(indexStr.indexOf(":") + 1, indexStr.lastIndexOf(":"));
+                        indexStr = indexStr.substring(indexStr.indexOf(":") + 1);
                         String[] indexStrArr = indexStr.split(",");
                         int i = Integer.valueOf(indexStrArr[0]), j = Integer.valueOf(indexStrArr[1]);
 
                         TextView cell = (TextView) ((TableRow)time_table.getChildAt(i)).getChildAt(j);
-                        if(isSelected) {
-                            // TODO: ArrayList Application to blur all selected cells
+                        if(j == prev_j || prev_j == 0) {
+                            if (isAllSelected) {
+                                // TODO: ArrayList Application to blur all selected cells
+                                for(int c = 0; i < selectedCells.size(); c++) {
+                                    selectedCells.get(c).setSelected(false);
+                                }
+                                selectedCells.clear();
+                                prev_i = prev_j = 0;
+                                isAllSelected = false;
+                            } else {
+                                // TODO: ArrayList Application to select all cells b/w 1st selected and last selected cells
+                                if(selectedCells.size() == 0) {
+                                    selectedCells.add(cell);
+                                    cell.setSelected(true);
+                                } else {
+                                    for(int c = prev_i + 1; c <= i; c++) {
+                                        TextView tv = (TextView) ((TableRow)time_table.getChildAt(c)).getChildAt(j);
+                                        tv.setSelected(true);
+                                        selectedCells.add(tv);
+                                    }
+                                    isAllSelected = true;
+                                }
+                            }
+                            prev_i = i; prev_j = j;
                         } else {
-                            // TODO: ArrayList Application to select all cells b/w 1st selected and last selected cells
+                            Toast.makeText(getApplicationContext(), "같은 강의실의 시간대를 먼저 설정해주세요.", Toast.LENGTH_SHORT).show();
                         }
-                        cell.setTag("time_table:" + i + "," + j + ":" + (!isSelected));
-                        cell.setSelected(!isSelected);
                     }
                 });
                 tr.addView(tv);
