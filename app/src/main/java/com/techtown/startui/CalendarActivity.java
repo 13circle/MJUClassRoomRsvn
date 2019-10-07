@@ -11,47 +11,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.util.Calendar;
-
-class MyDateObj {
-
-    private Calendar cal;
-    private int year;
-    private int month;
-    private int firstDayOfWeek;
-    private int lastDayOfMonth;
-
-    MyDateObj() {
-
-        this.cal = Calendar.getInstance();
-        setMyDateObj(this.cal.get(Calendar.YEAR), this.cal.get(Calendar.MONTH));
-
-    }
-
-    void setCalendarDayOfMth(int dayOfMth) { this.cal.set(Calendar.DAY_OF_MONTH, dayOfMth); }
-
-    Calendar getCalendar() { return this.cal; }
-
-    int getFirstDayOfWeek() { return this.firstDayOfWeek; }
-
-    int getLastDayOfMonth() { return this.lastDayOfMonth; }
-
-    void addMonth(int incr) { if(incr != 0) setMyDateObj(this.year, this.month + incr); }
-
-    private void setMyDateObj(int yr, int mth) {
-
-        this.cal.set(Calendar.YEAR, this.year = yr);
-        this.cal.set(Calendar.MONTH, this.month = mth);
-        this.cal.set(Calendar.DAY_OF_MONTH, 1);
-
-        this.firstDayOfWeek = this.cal.get(Calendar.DAY_OF_WEEK);
-        this.lastDayOfMonth = this.cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-
-    }
-
-}
 
 public class CalendarActivity extends AppCompatActivity {
 
@@ -73,7 +33,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         setBannerMthCurrent();
 
-        for(int i = 1, c = 1, li = calendar_view.getChildCount(); i < li; i++) {
+        for(int i = 2, li = calendar_view.getChildCount(); i < li; i++) {
 
             TableRow tr = (TableRow) calendar_view.getChildAt(i);
 
@@ -81,6 +41,7 @@ public class CalendarActivity extends AppCompatActivity {
 
                 LinearLayout cal_date = (LinearLayout) tr.getChildAt(j);
                 cal_date.setTag("calendarCell:" + i + "," + j);
+                cal_date.setClickable(true);
 
                 TextView tv = new TextView(this);
                 tv.setWidth(100);
@@ -101,18 +62,26 @@ public class CalendarActivity extends AppCompatActivity {
 
                         if(mthDateStr.length() > 0) {
 
-                            mdo.setCalendarDayOfMth(Integer.valueOf(mthDateStr));
+                            switch(j + 1) {
 
-                            ClassRoomData classRoomData = new ClassRoomData(mdo.getCalendar());
-                            Intent intent = new Intent(getApplicationContext(), TimeTableActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("classRoomData", classRoomData);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
+                                case 1: case 7:
+                                    Toast.makeText(getApplicationContext(), "주말은 예약할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                                    break;
+
+                                default:
+                                    mdo.setCalendarDayOfMth(Integer.valueOf(mthDateStr));
+
+                                    ClassRoomData classRoomData = new ClassRoomData(mdo.getCalendar());
+                                    Intent intent = new Intent(getApplicationContext(), TimeTableActivity.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putSerializable("classRoomData", classRoomData);
+                                    intent.putExtras(bundle);
+                                    startActivity(intent);
+                            }
 
                         }
 
-                    }
+                    } // onClick
                 }); // onClickListener (cal_date)
 
             } // for (TableRow)
@@ -170,7 +139,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         MDOToBannerMth();
 
-        for(int i = 1, iMax = calendar_view.getChildCount(); i < iMax; i++) {
+        for(int i = 2, iMax = calendar_view.getChildCount(); i < iMax; i++) {
 
             TableRow tr = (TableRow) calendar_view.getChildAt(i);
 
@@ -184,11 +153,11 @@ public class CalendarActivity extends AppCompatActivity {
 
         }
 
-        for(int i = 1, iMax = calendar_view.getChildCount(), dCnt = 1; i < iMax; i++) {
+        for(int i = 2, iMax = calendar_view.getChildCount(), dCnt = 1; i < iMax; i++) {
 
             TableRow tr = (TableRow) calendar_view.getChildAt(i);
 
-            for(int j = (i == 1) ? (mdo.getFirstDayOfWeek() - 1) : 0, dMax = mdo.getLastDayOfMonth(); j < 7 && dCnt <= dMax; j++, dCnt++) {
+            for(int j = (i == 2) ? (mdo.getFirstDayOfWeek() - 1) : 0, dMax = mdo.getLastDayOfMonth(); j < 7 && dCnt <= dMax; j++, dCnt++) {
 
                 TextView tv = (TextView)((LinearLayout) tr.getChildAt(j)).getChildAt(0);
 
@@ -199,16 +168,5 @@ public class CalendarActivity extends AppCompatActivity {
         }
 
     }
-
-
-    /* TODO: <1> Date Movement Funcs
-     * [1] private void moveMonth(int addMth)
-     * [2] private void setBannerMthCurrent() - DONE
-     * [5] private void colorCurrentDate()
-     *
-     * TODO: <2> Click Activation Animation
-     * [1] prev_month, next_month
-     * [2] cal_date
-     */
 
 }
