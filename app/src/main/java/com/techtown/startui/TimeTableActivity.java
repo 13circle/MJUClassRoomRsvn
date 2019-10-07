@@ -6,6 +6,7 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -76,6 +77,19 @@ public class TimeTableActivity extends AppCompatActivity {
             time_table.addView(tr);
 
         }
+
+        Button to_mypage = findViewById(R.id.to_mypage);
+        to_mypage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ClassRoomData classRoomData = new ClassRoomData();
+                Intent intent = new Intent(getApplicationContext(), mypage.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("classRoomData", classRoomData);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
 
     }
 }
