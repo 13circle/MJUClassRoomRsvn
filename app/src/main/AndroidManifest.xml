@@ -9,12 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-
-        <activity android:name="com.techtown.startui.mypage"></activity>
-        <activity android:name="com.techtown.startui.TimeTableActivity" />
-        <activity android:name="com.techtown.startui.CalendarActivity" />
-        <activity android:name="com.techtown.startui.LogInActivity" />
-        <activity android:name="com.techtown.startui.MainActivity">
+        <activity android:name=".reserve"></activity>
+        <activity android:name=".mypage" />
+        <activity android:name=".TimeTableActivity" />
+        <activity android:name=".CalendarActivity" />
+        <activity android:name=".LogInActivity" />
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

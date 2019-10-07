@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="reserve">
+        <item>학습</item>
+        <item>회의</item>
+        <item>수업</item>
+        <item>시험</item>
+        <item>기타</item>
+    </string-array>
+</resources>
