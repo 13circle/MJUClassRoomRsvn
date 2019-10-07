@@ -69,15 +69,13 @@ public class TimeTableActivity extends AppCompatActivity {
                         TextView cell = (TextView) ((TableRow)time_table.getChildAt(i)).getChildAt(j);
                         if(j == prev_j || prev_j == 0) {
                             if (isAllSelected) {
-                                // TODO: ArrayList Application to blur all selected cells
-                                for(int c = 0; i < selectedCells.size(); c++) {
+                                for(int c = 0; c < selectedCells.size(); c++) {
                                     selectedCells.get(c).setSelected(false);
                                 }
                                 selectedCells.clear();
                                 prev_i = prev_j = 0;
                                 isAllSelected = false;
                             } else {
-                                // TODO: ArrayList Application to select all cells b/w 1st selected and last selected cells
                                 if(selectedCells.size() == 0) {
                                     selectedCells.add(cell);
                                     cell.setSelected(true);
@@ -89,8 +87,8 @@ public class TimeTableActivity extends AppCompatActivity {
                                     }
                                     isAllSelected = true;
                                 }
+                                prev_i = i; prev_j = j;
                             }
-                            prev_i = i; prev_j = j;
                         } else {
                             Toast.makeText(getApplicationContext(), "같은 강의실의 시간대를 먼저 설정해주세요.", Toast.LENGTH_SHORT).show();
                         }
