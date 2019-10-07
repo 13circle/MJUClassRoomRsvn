@@ -6,7 +6,6 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
@@ -14,7 +13,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.DataOutput;
 import java.util.ArrayList;
 
 public class TimeTableActivity extends AppCompatActivity {
@@ -70,13 +68,13 @@ public class TimeTableActivity extends AppCompatActivity {
                         int i = Integer.valueOf(indexStrArr[0]), j = Integer.valueOf(indexStrArr[1]);
 
                         TextView cell = (TextView) ((TableRow)time_table.getChildAt(i)).getChildAt(j);
-                        if(j == prev_j || prev_j == 0) {
+                        if((j == prev_j || prev_j == 0) && (prev_i <= i)) {
 
                             TextView selection_message = findViewById(R.id.selection_message);
                             RelativeLayout to_reservation = findViewById(R.id.to_reservation);
 
                             if (isAllSelected) {
-                                for(int c = 0; c < selectedCells.size(); c++) {
+                                for (int c = 0; c < selectedCells.size(); c++) {
                                     selectedCells.get(c).setSelected(false);
                                 }
                                 selectedCells.clear();
@@ -87,15 +85,15 @@ public class TimeTableActivity extends AppCompatActivity {
                                 to_reservation.setVisibility(View.INVISIBLE);
 
                             } else {
-                                if(selectedCells.size() == 0) {
+                                if (selectedCells.size() == 0) {
                                     selectedCells.add(cell);
                                     cell.setSelected(true);
 
                                     selection_message.setVisibility(View.VISIBLE);
 
                                 } else {
-                                    for(int c = prev_i + 1; c <= i; c++) {
-                                        TextView tv = (TextView) ((TableRow)time_table.getChildAt(c)).getChildAt(j);
+                                    for (int c = prev_i + 1; c <= i; c++) {
+                                        TextView tv = (TextView) ((TableRow) time_table.getChildAt(c)).getChildAt(j);
                                         tv.setSelected(true);
                                         selectedCells.add(tv);
                                     }
@@ -103,8 +101,11 @@ public class TimeTableActivity extends AppCompatActivity {
                                     selection_message.setVisibility(View.INVISIBLE);
                                     to_reservation.setVisibility(View.VISIBLE);
                                 }
-                                prev_i = i; prev_j = j;
+                                prev_i = i;
+                                prev_j = j;
                             }
+                        } else if(prev_i > i) {
+                            Toast.makeText(getApplicationContext(), "종료 시간은 시작 시간 뒤에 와야 합니다.", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(getApplicationContext(), "같은 강의실의 시간대를 먼저 설정해주세요.", Toast.LENGTH_SHORT).show();
                         }

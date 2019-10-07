@@ -122,7 +122,7 @@
             android:layout_alignParentStart="true"
             android:paddingLeft="10dp"
             android:paddingStart="10dp"
-            android:text="선택하신 강의실/시간대에 예약하시겠습니까?" />
+            android:text="예약하시겠습니까?" />
 
         <Button
             android:id="@+id/confirm_reserve"
