@@ -101,8 +101,8 @@ public class TimeTableActivity extends AppCompatActivity {
 
         }
 
-        Button to_mypage = findViewById(R.id.to_mypage);
-        to_mypage.setOnClickListener(new View.OnClickListener() {
+        Button to_mypage2 = findViewById(R.id.to_mypage2);
+        to_mypage2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ClassRoomData classRoomData = new ClassRoomData();

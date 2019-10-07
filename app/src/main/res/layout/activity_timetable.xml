@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="XXXX년 XX월 XX일"
+        android:textColor="#fff"
         android:textSize="25sp"
         android:padding="15dp"
         android:background="@color/colorPrimaryDark"/>
@@ -70,7 +71,7 @@
     </ScrollView>
 
     <Button
-        android:id="@+id/to_mypage"
+        android:id="@+id/to_mypage2"
         android:layout_width="43dp"
         android:layout_height="43dp"
         android:layout_alignParentEnd="true"

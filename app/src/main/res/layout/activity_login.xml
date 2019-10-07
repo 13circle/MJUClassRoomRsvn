@@ -8,9 +8,10 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="명지대학교 강의실 대여 시스템"
         android:textSize="25sp"
         android:padding="15dp"
+        android:textColor="#fff"
         android:background="@color/colorPrimaryDark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
@@ -18,7 +19,7 @@
     <TableLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#13359B"
+        android:background="@drawable/login_form_background"
         android:padding="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -85,6 +86,23 @@
                 android:textColor="#000"
                 android:layout_span="2"
                 android:text="LOGIN" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/register"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/button_selector_sub2"
+                android:textColor="#fff"
+                android:layout_span="2"
+                android:text="회원가입" />
+
         </TableRow>
 
     </TableLayout>

@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -18,12 +19,16 @@ public class CalendarActivity extends AppCompatActivity {
     Calendar calendar;
     TableLayout calendar_view;
     TextView prev_month, mth_banner, next_month;
+    ClassRoomData classRoomData;
     final MyDateObj mdo = new MyDateObj();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
+
+        Intent intent = getIntent();
+        classRoomData = (ClassRoomData) intent.getSerializableExtra("classRoomData");
 
         calendar_view = findViewById(R.id.calendar_view);
         prev_month = findViewById(R.id.prev_month);
@@ -71,7 +76,7 @@ public class CalendarActivity extends AppCompatActivity {
                                 default:
                                     mdo.setCalendarDayOfMth(Integer.valueOf(mthDateStr));
 
-                                    ClassRoomData classRoomData = new ClassRoomData(mdo.getCalendar());
+                                    classRoomData.setCalendar(mdo.getCalendar());
                                     Intent intent = new Intent(getApplicationContext(), TimeTableActivity.class);
                                     Bundle bundle = new Bundle();
                                     bundle.putSerializable("classRoomData", classRoomData);
@@ -104,6 +109,20 @@ public class CalendarActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 moveMonth(1);
+
+            }
+        });
+
+        Button to_mypage = findViewById(R.id.to_mypage);
+        to_mypage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(getApplicationContext(), mypage.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("classRoomData", classRoomData);
+                intent.putExtras(bundle);
+                startActivity(intent);
 
             }
         });

@@ -24,7 +24,11 @@ public class LogInActivity extends AppCompatActivity {
         login_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ClassRoomData classRoomData = new ClassRoomData();
                 Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("classRoomData", classRoomData);
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
