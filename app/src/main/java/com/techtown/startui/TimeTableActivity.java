@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class TimeTableActivity extends AppCompatActivity {
 
     TableLayout time_table;
-    ArrayList<TextView> selectecCells;
+    ArrayList<TextView> selectedCells;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -24,7 +24,7 @@ public class TimeTableActivity extends AppCompatActivity {
 
         TextView time_table_banner = findViewById(R.id.time_table_banner);
         time_table = findViewById(R.id.time_table);
-        selectecCells = new ArrayList<>();
+        selectedCells = new ArrayList<>();
 
         Intent intent = getIntent();
         ClassRoomData CRdata = (ClassRoomData)intent.getSerializableExtra("classRoomData");

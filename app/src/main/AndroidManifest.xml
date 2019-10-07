@@ -10,11 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
 
-        <activity android:name=".mypage"></activity>
-        <activity android:name=".TimeTableActivity" />
-        <activity android:name=".CalendarActivity" />
-        <activity android:name=".LogInActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name="com.techtown.startui.mypage"></activity>
+        <activity android:name="com.techtown.startui.TimeTableActivity" />
+        <activity android:name="com.techtown.startui.CalendarActivity" />
+        <activity android:name="com.techtown.startui.LogInActivity" />
+        <activity android:name="com.techtown.startui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

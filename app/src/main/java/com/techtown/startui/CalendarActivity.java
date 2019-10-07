@@ -11,8 +11,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.util.Calendar;
 
 public class CalendarActivity extends AppCompatActivity {
