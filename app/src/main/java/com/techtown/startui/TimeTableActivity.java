@@ -6,7 +6,9 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -20,6 +22,7 @@ public class TimeTableActivity extends AppCompatActivity {
     TableLayout time_table;
     ArrayList<TextView> selectedCells;
     Boolean isAllSelected;
+    ClassRoomData classRoomData;
     int prev_i, prev_j;
 
     @Override
@@ -32,9 +35,9 @@ public class TimeTableActivity extends AppCompatActivity {
         selectedCells = new ArrayList<>();
 
         Intent intent = getIntent();
-        ClassRoomData CRdata = (ClassRoomData)intent.getSerializableExtra("classRoomData");
+        classRoomData = (ClassRoomData)intent.getSerializableExtra("classRoomData");
 
-        time_table_banner.setText(CRdata.getYear() + "년 " + (CRdata.getMonth() + 1) + "월 " + CRdata.getDate() + "일");
+        time_table_banner.setText(classRoomData.getYear() + "년 " + (classRoomData.getMonth() + 1) + "월 " + classRoomData.getDate() + "일");
 
         final int init_hr = 9;
         final int fin_hr = 20;
@@ -68,6 +71,10 @@ public class TimeTableActivity extends AppCompatActivity {
 
                         TextView cell = (TextView) ((TableRow)time_table.getChildAt(i)).getChildAt(j);
                         if(j == prev_j || prev_j == 0) {
+
+                            TextView selection_message = findViewById(R.id.selection_message);
+                            RelativeLayout to_reservation = findViewById(R.id.to_reservation);
+
                             if (isAllSelected) {
                                 for(int c = 0; c < selectedCells.size(); c++) {
                                     selectedCells.get(c).setSelected(false);
@@ -75,10 +82,17 @@ public class TimeTableActivity extends AppCompatActivity {
                                 selectedCells.clear();
                                 prev_i = prev_j = 0;
                                 isAllSelected = false;
+
+                                selection_message.setVisibility(View.INVISIBLE);
+                                to_reservation.setVisibility(View.INVISIBLE);
+
                             } else {
                                 if(selectedCells.size() == 0) {
                                     selectedCells.add(cell);
                                     cell.setSelected(true);
+
+                                    selection_message.setVisibility(View.VISIBLE);
+
                                 } else {
                                     for(int c = prev_i + 1; c <= i; c++) {
                                         TextView tv = (TextView) ((TableRow)time_table.getChildAt(c)).getChildAt(j);
@@ -86,6 +100,8 @@ public class TimeTableActivity extends AppCompatActivity {
                                         selectedCells.add(tv);
                                     }
                                     isAllSelected = true;
+                                    selection_message.setVisibility(View.INVISIBLE);
+                                    to_reservation.setVisibility(View.VISIBLE);
                                 }
                                 prev_i = i; prev_j = j;
                             }
@@ -101,11 +117,37 @@ public class TimeTableActivity extends AppCompatActivity {
 
         }
 
+        Button confirm_reserve = findViewById(R.id.confirm_reserve);
+        confirm_reserve.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), reserve.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("classRoomData", classRoomData);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+
+        Button cancel_reserve = findViewById(R.id.cancel_reserve);
+        cancel_reserve.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for(int c = 0; c < selectedCells.size(); c++) {
+                    selectedCells.get(c).setSelected(false);
+                }
+                selectedCells.clear();
+                prev_i = prev_j = 0;
+                isAllSelected = false;
+
+                findViewById(R.id.to_reservation).setVisibility(View.INVISIBLE);
+            }
+        });
+
         Button to_mypage2 = findViewById(R.id.to_mypage2);
         to_mypage2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ClassRoomData classRoomData = new ClassRoomData();
                 Intent intent = new Intent(getApplicationContext(), mypage.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("classRoomData", classRoomData);

@@ -3,6 +3,7 @@ package com.techtown.startui;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -46,7 +47,7 @@ public class CalendarActivity extends AppCompatActivity {
 
                 LinearLayout cal_date = (LinearLayout) tr.getChildAt(j);
                 cal_date.setTag("calendarCell:" + i + "," + j);
-                cal_date.setClickable(true);
+                cal_date.setClickable(true); cal_date.setOrientation(LinearLayout.VERTICAL);
 
                 TextView tv = new TextView(this);
                 tv.setWidth(100);
@@ -172,13 +173,24 @@ public class CalendarActivity extends AppCompatActivity {
 
         }
 
+        Calendar cal = Calendar.getInstance();
+
         for(int i = 2, iMax = calendar_view.getChildCount(), dCnt = 1; i < iMax; i++) {
 
             TableRow tr = (TableRow) calendar_view.getChildAt(i);
 
             for(int j = (i == 2) ? (mdo.getFirstDayOfWeek() - 1) : 0, dMax = mdo.getLastDayOfMonth(); j < 7 && dCnt <= dMax; j++, dCnt++) {
 
-                TextView tv = (TextView)((LinearLayout) tr.getChildAt(j)).getChildAt(0);
+                LinearLayout ll = (LinearLayout) tr.getChildAt(j);
+
+                TextView tv = (TextView)ll.getChildAt(0);
+
+                int yr = cal.get(Calendar.YEAR), yr2 = mdo.getCalendar().get(Calendar.YEAR);
+                int mth = cal.get(Calendar.MONTH), mth2 = mdo.getCalendar().get(Calendar.MONTH);
+                int date = cal.get(Calendar.DAY_OF_MONTH);
+
+                if(yr == yr2 && mth == mth2 && date == dCnt) ll.setBackgroundResource(R.drawable.calendar_cell_today_background);
+                else ll.setBackgroundResource(R.drawable.calendar_cell_background);
 
                 tv.setText(String.valueOf(dCnt));
 

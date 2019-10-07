@@ -85,4 +85,68 @@
         android:textColor="#000"
         android:text="MY" />
 
+    <TextView
+        android:id="@+id/selection_message"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:paddingLeft="10dp"
+        android:paddingStart="10dp"
+        android:textColor="#000"
+        android:text="종료 시간을 선택하세요"
+        android:gravity="center_vertical"
+        android:visibility="invisible"
+        android:background="@drawable/table_selection_message_background" />
+
+    <RelativeLayout
+        android:id="@+id/to_reservation"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:visibility="invisible"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimaryDark">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="#fff"
+            android:gravity="center_vertical"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:paddingLeft="10dp"
+            android:paddingStart="10dp"
+            android:text="선택하신 강의실/시간대에 예약하시겠습니까?" />
+
+        <Button
+            android:id="@+id/confirm_reserve"
+            android:layout_width="50dp"
+            android:layout_height="43dp"
+            android:gravity="center"
+            android:text="확인"
+            android:textColor="#fff"
+            android:background="@color/colorPrimaryDark"
+            android:layout_toLeftOf="@+id/cancel_reserve"/>
+
+        <Button
+            android:id="@+id/cancel_reserve"
+            android:layout_width="50dp"
+            android:layout_height="43dp"
+            android:gravity="center"
+            android:text="취소"
+            android:textColor="#fff"
+            android:background="@color/colorPrimaryDark"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+    </RelativeLayout>
+
 </RelativeLayout>
