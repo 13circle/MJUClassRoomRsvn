@@ -50,13 +50,13 @@ public class TimeTableActivity extends AppCompatActivity {
             String startTime = ((hr < 10) ? ("0" + hr) : hr) + ":00";
             String endTime = (((hr + 1) < 10) ? ("0" + (hr + 1)) : (hr + 1)) + ":00";
             tv.setText(startTime + "~" + endTime);
-            tv.setBackgroundDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.table_header_cell_background, null));
+            tv.setBackgroundResource(R.drawable.table_header_cell_background);
             tv.setGravity(Gravity.CENTER);
             tr.addView(tv);
 
             for(int j = 1; j < clen; j++) {
                 tv = new TextView(this);
-                tv.setBackgroundDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.table_cell_background, null));
+                tv.setBackgroundResource(R.drawable.table_cell_background);
                 tv.setGravity(Gravity.CENTER); tv.setClickable(true);
                 tv.setTag("time_table:" + i + "," + j);
                 tv.setOnClickListener(new View.OnClickListener() {

@@ -10,7 +10,7 @@ import android.widget.EditText;
 public class LogInActivity extends AppCompatActivity {
 
     EditText login_id, login_pw;
-    Button login_submit;
+    Button btn_login_submit, btn_register;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -19,16 +19,26 @@ public class LogInActivity extends AppCompatActivity {
 
         login_id = findViewById(R.id.login_id);
         login_pw = findViewById(R.id.login_pw);
-        login_submit = findViewById(R.id.login_submit);
+        btn_login_submit = findViewById(R.id.login_submit);
+        btn_register = findViewById(R.id.register);
 
-        login_submit.setOnClickListener(new View.OnClickListener() {
+        btn_login_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // TODO: Call user data from all user files to check ID/PW and get the user data on ClassRoomData
                 ClassRoomData classRoomData = new ClassRoomData();
                 Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("classRoomData", classRoomData);
                 intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+
+        btn_register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), Membership.class);
                 startActivity(intent);
             }
         });

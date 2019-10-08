@@ -14,10 +14,10 @@
         android:textColor="#fff"/>
 
     <TableLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:padding="20dp"
-        android:background="#13359B">
+        android:background="@color/colorSub">
 
 
         <TableRow
@@ -30,7 +30,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="아이디:"
+                android:text="아이디"
                 android:textSize="24sp"
                 android:textColor="#fff"/>
 
@@ -47,7 +47,8 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:id="@+id/textView6"
@@ -55,7 +56,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="비밀번호:"
+                android:text="비밀번호"
                 android:textSize="24sp"
                 android:textColor="#fff"/>
 
@@ -71,7 +72,8 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:id="@+id/textView"
@@ -79,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="이름:"
+                android:text="이름"
                 android:textSize="24sp"
                 android:textColor="#fff"/>
 
@@ -95,7 +97,8 @@
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:id="@+id/textView3"
@@ -103,7 +106,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="전화번호:"
+                android:text="전화번호"
                 android:textSize="24sp"
                 android:textColor="#fff"/>
 
@@ -114,12 +117,13 @@
                 android:layout_height="match_parent"
                 android:cursorVisible="true"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="phone" />
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:id="@+id/textView4"
@@ -127,7 +131,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="이메일:"
+                android:text="이메일"
                 android:textSize="24sp"
                 android:textColor="#fff"/>
 
@@ -137,55 +141,54 @@
                 android:layout_height="match_parent"
                 android:cursorVisible="true"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="textWebEmailAddress" />
 
         </TableRow>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Button
-                android:id="@+id/button9"
-                android:layout_width="54dp"
-                android:layout_height="wrap_content"
-                android:text="이메일 인증"
-                android:background="@drawable/button_selector_white"
-                android:textColor="#000"/>
-
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp">
             <TextView
-                android:id="@+id/textView10"
+                android:id="@+id/text_auth_number"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="10dp"
                 android:text="인증번호"
-                android:textSize="15sp"
+                android:textSize="24sp"
                 android:textColor="#fff"/>
 
             <EditText
-                android:id="@+id/editText10"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:ems="10"
-                android:inputType="textPersonName" />
+                android:id="@+id/auth_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/text_auth_number"
+                android:layout_toRightOf="@id/text_auth_number"
+                android:ems="6"
+                android:inputType="number" />
 
+            <Button
+                android:id="@+id/email_auth_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/auth_number"
+                android:layout_toRightOf="@id/auth_number"
+                android:text="이메일 인증"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/button_selector_white"
+                android:textColor="#000" />
 
-        </TableRow>
+        </RelativeLayout>
 
         <Button
-            android:id="@+id/button31"
-            android:layout_width="198dp"
-            android:layout_height="71dp"
+            android:id="@+id/register_member"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="@drawable/button_selector_white"
             android:text="회원가입"
+            android:layout_marginTop="20dp"
             android:textColor="#000" />
     </TableLayout>
 
