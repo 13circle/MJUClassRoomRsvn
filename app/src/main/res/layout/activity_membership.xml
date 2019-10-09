@@ -25,7 +25,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/text_id_register"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -36,12 +36,12 @@
 
 
             <EditText
-                android:id="@+id/editText3"
+                android:id="@+id/id_register"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:cursorVisible="true"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="number" />
 
         </TableRow>
 
@@ -51,7 +51,7 @@
             android:layout_marginTop="10dp">
 
             <TextView
-                android:id="@+id/textView6"
+                android:id="@+id/text_pw_register"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -61,7 +61,7 @@
                 android:textColor="#fff"/>
 
             <EditText
-                android:id="@+id/editText4"
+                android:id="@+id/pw_register"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:cursorVisible="true"
@@ -76,7 +76,7 @@
             android:layout_marginTop="10dp">
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/text_name_register"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -86,7 +86,7 @@
                 android:textColor="#fff"/>
 
             <EditText
-                android:id="@+id/editText"
+                android:id="@+id/name_register"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:cursorVisible="true"
@@ -101,7 +101,7 @@
             android:layout_marginTop="10dp">
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/text_phone_number"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -112,7 +112,7 @@
 
 
             <EditText
-                android:id="@+id/editText2"
+                android:id="@+id/phone_number"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:cursorVisible="true"
@@ -126,7 +126,7 @@
             android:layout_marginTop="10dp">
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/text_email_register"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -136,7 +136,7 @@
                 android:textColor="#fff"/>
 
             <EditText
-                android:id="@+id/editText5"
+                android:id="@+id/email_register"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:cursorVisible="true"
