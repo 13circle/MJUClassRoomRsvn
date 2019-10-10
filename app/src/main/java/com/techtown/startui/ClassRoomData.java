@@ -1,5 +1,6 @@
 package com.techtown.startui;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
@@ -54,8 +55,6 @@ public class ClassRoomData implements Serializable {
     private long endTime;        // 이용 종료 시간
     private String usage;        // 대여 사유
 
-    JSONObject jsonObject;      // ClassRoomData의 JSON 형식
-
     /* 생성자 */
     public ClassRoomData() {                                                    // 기본 생성자
         this.userId = 0;
@@ -72,7 +71,6 @@ public class ClassRoomData implements Serializable {
         this.endTime = 0;
         this.usage = "";
 
-        this.jsonObject = new JSONObject();
     }
     public ClassRoomData(int userId, String userPw) {                      // 사용자 계정 정보 초기화 생성자
         this();     // 초기화
@@ -122,6 +120,45 @@ public class ClassRoomData implements Serializable {
             case 7: wkDayStr = "토"; break;
         }
         return wkDayStr;
+    }
+
+
+    /* JSON 관련 메소드 */
+    public JSONObject getJSON() {                                                   // 속성들을 JSON 형태로 변환 후 반환
+
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+
+            jsonObject.put("userId", this.userId);
+            jsonObject.put("userPw", this.userPw);
+            jsonObject.put("userName", this.userName);
+            jsonObject.put("userEmail", this.userEmail);
+            jsonObject.put("phoneNumber", this.phoneNumber);
+
+            jsonObject.put("classRoom", this.classRoom);
+            jsonObject.put("startTime", this.startTime);
+            jsonObject.put("endTime", this.endTime);
+            jsonObject.put("usage", this.usage);
+
+        } catch (JSONException e) {
+
+            e.printStackTrace();
+
+        }
+
+        return jsonObject;
+
+    }
+    public void readJSON() {                                                        // JSON 읽기
+
+        //
+
+    }
+    public void writeJSON() {                                                       // JSON 쓰기
+
+        //
+
     }
 
 }
