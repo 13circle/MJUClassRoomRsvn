@@ -17,7 +17,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="20dp"
-        android:background="@color/colorSub">
+        android:background="@color/colorSub"
+        android:stretchColumns="*">
 
 
         <TableRow
@@ -66,7 +67,7 @@
                 android:layout_height="match_parent"
                 android:cursorVisible="true"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:inputType="textPassword" />
 
         </TableRow>
 
@@ -145,42 +146,21 @@
 
         </TableRow>
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginTop="15dp">
-            <TextView
-                android:id="@+id/text_auth_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="인증번호"
-                android:textSize="24sp"
-                android:textColor="#fff"/>
-
-            <EditText
-                android:id="@+id/auth_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/text_auth_number"
-                android:layout_toRightOf="@id/text_auth_number"
-                android:ems="6"
-                android:inputType="number" />
 
             <Button
                 android:id="@+id/email_auth_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/auth_number"
-                android:layout_toRightOf="@id/auth_number"
                 android:text="이메일 인증"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:background="@drawable/button_selector_white"
-                android:textColor="#000" />
+                android:layout_span="2"
+                android:background="@drawable/button_selector_sub2"
+                android:textColor="#fff" />
 
-        </RelativeLayout>
+        </TableRow>
 
         <Button
             android:id="@+id/register_member"
