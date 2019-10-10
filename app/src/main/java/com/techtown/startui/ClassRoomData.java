@@ -1,5 +1,7 @@
 package com.techtown.startui;
 
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.Calendar;
 
@@ -52,6 +54,7 @@ public class ClassRoomData implements Serializable {
     private long endTime;        // 이용 종료 시간
     private String usage;        // 대여 사유
 
+    JSONObject jsonObject;      // ClassRoomData의 JSON 형식
 
     /* 생성자 */
     public ClassRoomData() {                                                    // 기본 생성자
@@ -68,6 +71,8 @@ public class ClassRoomData implements Serializable {
         this.startTime = 0;
         this.endTime = 0;
         this.usage = "";
+
+        this.jsonObject = new JSONObject();
     }
     public ClassRoomData(int userId, String userPw) {                      // 사용자 계정 정보 초기화 생성자
         this();     // 초기화

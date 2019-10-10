@@ -26,6 +26,7 @@ public class LogInActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // TODO: Call user data from all user files to check ID/PW and get the user data on ClassRoomData
+                // TODO: https://stackoverflow.com/questions/40404567/how-to-send-verification-email-with-firebase
                 ClassRoomData classRoomData = new ClassRoomData();
                 Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
                 Bundle bundle = new Bundle();

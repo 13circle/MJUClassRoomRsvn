@@ -17,6 +17,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -85,6 +87,7 @@ public class Membership extends AppCompatActivity {
         register_member.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (isEmailAuthenticated) {
 
                     id_register = findViewById(R.id.id_register);
@@ -101,7 +104,7 @@ public class Membership extends AppCompatActivity {
 
                     // TODO: Call JSON-related methods in ClassRoomData to write the file
 
-                    // TODO: Check Account is Verified or not
+                    //
 
                 } else {
 
