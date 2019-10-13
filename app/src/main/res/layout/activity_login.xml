@@ -21,10 +21,10 @@
         android:layout_height="wrap_content"
         android:background="@drawable/login_form_background"
         android:padding="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <TableRow
             android:layout_width="match_parent"
@@ -46,7 +46,7 @@
                 android:layout_height="match_parent"
                 android:cursorVisible="true"
                 android:ems="10"
-                android:inputType="textPersonName"
+                android:inputType="numberDecimal"
                 android:textColor="#fff" />
         </TableRow>
 
@@ -82,10 +82,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:background="@drawable/button_selector_white"
-                android:textColor="#000"
                 android:layout_span="2"
-                android:text="LOGIN" />
+                android:background="@drawable/button_selector_white"
+                android:text="LOGIN"
+                android:textColor="#000" />
 
         </TableRow>
 
@@ -98,10 +98,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:background="@drawable/button_selector_sub2"
-                android:textColor="#fff"
                 android:layout_span="2"
-                android:text="회원가입" />
+                android:background="@drawable/button_selector_sub2"
+                android:text="회원가입"
+                android:textColor="#fff" />
 
         </TableRow>
 
