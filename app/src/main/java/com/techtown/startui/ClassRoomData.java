@@ -178,9 +178,17 @@ public class ClassRoomData implements Serializable {
             jo.getJSONObject(strBUFFER.toString());
 
             this.setUserId(jo.getInt("userId"));
+            this.setUserPw(jo.getString("userPw"));
+            this.setUserName(jo.getString("userName"));
+            this.setUserEmail(jo.getString("userEmail"));
+            this.setPhoneNumber(jo.getString("phoneNumber"));
 
+            this.setClassRoom(jo.getString("classRoom"));
+            this.setStartTime(jo.getLong("startTime"));
+            this.setEndTime(jo.getLong("endTime"));
+            this.setUsage(jo.getString("usage"));
 
-
+            
         }catch(JSONException|IOException ex) {
             ex.printStackTrace();
         }
