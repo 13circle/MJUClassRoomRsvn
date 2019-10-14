@@ -1,8 +1,17 @@
 package com.techtown.startui;
 
+import android.content.Context;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.Calendar;
 
@@ -150,14 +159,46 @@ public class ClassRoomData implements Serializable {
         return jsonObject;
 
     }
-    public void readJSON() {                                                        // JSON 읽기
+    public void readJSON(Context context, int useId) {                                                        // JSON 읽기
 
         //
+        StringBuffer strBUFFER=new StringBuffer();
+        try {
+            InputStream is = new FileInputStream(context.getFilesDir().toString()+Integer.toString(userId)+".json");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+            String line = " ";
+            while ((line = reader.readLine()) != null) {
+                strBUFFER.append(line + "\n");
+            }
+            reader.close();
+            is.close();
+
+            JSONObject jo = new JSONObject();
+            jo.getJSONObject(strBUFFER.toString());
+
+            this.setUserId(jo.getInt("userId"));
+
+
+
+        }catch(JSONException|IOException ex) {
+            ex.printStackTrace();
+        }
 
     }
-    public void writeJSON() {                                                       // JSON 쓰기
+    public void writeJSON(Context context) {                                                       // JSON 쓰기
 
         //
+        String path = context.getFilesDir().toString();
+        try {
+            BufferedWriter bw=new BufferedWriter(new FileWriter(path + Integer.toString(this.getUserId())+".json"));
+            JSONObject jo = new JSONObject();
+            jo = getJSON();
+            bw.write(jo.toString());
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
