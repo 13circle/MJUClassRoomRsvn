@@ -117,7 +117,7 @@ public class Membership extends AppCompatActivity {
                         classRoomData.setPhoneNumber(phone_number.getText().toString());
                         classRoomData.setUserEmail(email_register.getText().toString());
 
-                        classRoomData.writeJSON();
+                        //classRoomData.writeJSON();
 
                         Toast.makeText(getApplicationContext(), "가입되셨습니다", Toast.LENGTH_SHORT).show();
                         finish();
