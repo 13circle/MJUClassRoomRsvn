@@ -45,7 +45,7 @@ public class LogInActivity extends AppCompatActivity {
                     classRoomData.setUserPw(login_pw.getText().toString());
 
                     // TODO: ▼ ▼ ▼  등록된 테스트 이메일 입력  ▼ ▼ ▼
-                    classRoomData.setUserEmail("13circle97@gmail.com"); // TODO: Just for test. MUST BE REMOVED LATER ON.
+                    classRoomData.setUserEmail("13circle97@gmail.com"); // TODO: Just for test. MUST BE REMOVED LATER.
                     // TODO: ▲ ▲ ▲  등록된 테스트 이메일 입력  ▲ ▲ ▲
 
                     classRoomData.readJSON(); // TODO: MUST verify whether a following ID matches to the user

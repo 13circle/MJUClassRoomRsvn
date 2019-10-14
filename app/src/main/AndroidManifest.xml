@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".reserve"></activity>
+        <activity android:name=".EmailVerificationActivity" />
+        <activity android:name=".reserve" />
         <activity android:name=".mypage" />
         <activity android:name=".TimeTableActivity" />
         <activity android:name=".CalendarActivity" />

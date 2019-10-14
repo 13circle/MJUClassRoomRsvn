@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorSub">
+
+    <TextView
+        android:id="@+id/email_verification_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:text="인증 메일이 발송되었습니다.\n이메일 인증 후 확인을 눌러주세요."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+    <Button
+        android:id="@+id/verification_completed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="확인"
+        android:background="@drawable/button_selector_white"
+        android:layout_marginTop="20dp"
+        android:textColor="#000"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="@+id/email_verification_banner"
+        app:layout_constraintEnd_toEndOf="@id/email_verification_banner"
+        app:layout_constraintTop_toBottomOf="@+id/email_verification_banner"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

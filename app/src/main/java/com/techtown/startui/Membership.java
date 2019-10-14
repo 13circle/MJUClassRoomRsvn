@@ -44,7 +44,7 @@ public class Membership extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseUser user;
 
-    Boolean isVerificationSent;
+    boolean isVerificationSent;
 
     // Firebase Authentication reference: https://stackoverflow.com/questions/40404567/how-to-send-verification-email-with-firebase
 
@@ -67,8 +67,8 @@ public class Membership extends AppCompatActivity {
                 email_register = findViewById(R.id.email_register);
                 pw_register = findViewById(R.id.pw_register);
 
-                String email = email_register.getText().toString();
-                String password = pw_register.getText().toString();
+                final String email = email_register.getText().toString();
+                final String password = pw_register.getText().toString();
 
                 if(!isFormEmpty()) {
 
@@ -79,6 +79,10 @@ public class Membership extends AppCompatActivity {
                                     if (task.isSuccessful()) {
                                         // Sign in success, update UI with the signed-in user's information
                                         sendVerificationEmail();
+                                        Intent intent = new Intent(getApplicationContext(), EmailVerificationActivity.class);
+                                        intent.putExtra("email", email);
+                                        intent.putExtra("password", password);
+                                        startActivity(intent);
                                     } else {
                                         // If sign in fails, display a message to the user.
                                         Toast.makeText(getApplicationContext(), "이미 가입된 사용자이거나 승인된 이메일 주소가 아닙니다.", Toast.LENGTH_SHORT).show();
@@ -99,12 +103,7 @@ public class Membership extends AppCompatActivity {
                 boolean isFormCompleted = !isFormEmpty();
                 if(isFormCompleted && isVerificationSent) {
 
-                    String email = email_register.getText().toString();
-                    String password = pw_register.getText().toString();
-
-                    auth.signInWithEmailAndPassword(email, password);
-
-                    if (FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()) {
+                    if (auth.getCurrentUser().isEmailVerified()) {
 
                         id_register = findViewById(R.id.id_register);
                         pw_register = findViewById(R.id.pw_register);
@@ -123,7 +122,7 @@ public class Membership extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "가입되셨습니다", Toast.LENGTH_SHORT).show();
                         finish();
 
-                    } else {
+                    } else  {
 
                         Toast.makeText(getApplicationContext(), "인증 메일을 확인해주세요", Toast.LENGTH_SHORT).show();
 
@@ -221,8 +220,8 @@ public class Membership extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "인증 메일이 발송되었습니다.\n입력하신 이메일 계정을 확인하여 주십시요.", Toast.LENGTH_SHORT).show();
                             isVerificationSent = true;
+                            //
                         } else {
                             Toast.makeText(getApplicationContext(), "인증 메일 발송에 실패하였습니다.", Toast.LENGTH_SHORT).show();
                         }
