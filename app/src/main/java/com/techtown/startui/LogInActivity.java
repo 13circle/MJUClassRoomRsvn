@@ -48,7 +48,7 @@ public class LogInActivity extends AppCompatActivity {
                     classRoomData.setUserEmail("13circle97@gmail.com"); // TODO: Just for test. MUST BE REMOVED LATER.
                     // TODO: ▲ ▲ ▲  등록된 테스트 이메일 입력  ▲ ▲ ▲
 
-                    classRoomData.readJSON(); // TODO: MUST verify whether a following ID matches to the user
+                    //classRoomData.readJSON(); // TODO: MUST verify whether a following ID matches to the user
 
                     FirebaseAuth auth = FirebaseAuth.getInstance();
                     auth.signInWithEmailAndPassword(classRoomData.getUserEmail(), classRoomData.getUserPw())
@@ -72,13 +72,15 @@ public class LogInActivity extends AppCompatActivity {
 
                 }
 
+                //
+
             }
         });
 
         btn_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), Membership.class);
+                Intent intent = new Intent(getApplicationContext(), MembershipActivity.class);
                 startActivity(intent);
             }
         });

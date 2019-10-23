@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class Membership extends AppCompatActivity {
+public class MembershipActivity extends AppCompatActivity {
 
     ClassRoomData classRoomData;
 

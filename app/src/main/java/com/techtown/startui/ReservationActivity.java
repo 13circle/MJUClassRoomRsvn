@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Spinner;
 
-public class reserve extends AppCompatActivity {
+public class ReservationActivity extends AppCompatActivity {
 
     private Spinner spinner;
     ClassRoomData classRoomData;
@@ -13,7 +13,7 @@ public class reserve extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reserve);
+        setContentView(R.layout.activity_reservation);
 
         Intent intent = getIntent();
         classRoomData = (ClassRoomData)intent.getSerializableExtra("classRoomData");

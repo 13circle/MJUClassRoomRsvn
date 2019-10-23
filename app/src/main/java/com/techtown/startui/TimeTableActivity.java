@@ -2,7 +2,7 @@ package com.techtown.startui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.core.content.res.ResourcesCompat;
+
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
@@ -122,7 +122,7 @@ public class TimeTableActivity extends AppCompatActivity {
         confirm_reserve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), reserve.class);
+                Intent intent = new Intent(getApplicationContext(), ReservationActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("classRoomData", classRoomData);
                 intent.putExtras(bundle);
@@ -149,7 +149,7 @@ public class TimeTableActivity extends AppCompatActivity {
         to_mypage2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), mypage.class);
+                Intent intent = new Intent(getApplicationContext(), MyPageActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("classRoomData", classRoomData);
                 intent.putExtras(bundle);
