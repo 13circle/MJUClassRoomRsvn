@@ -5,6 +5,9 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +17,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class LogInActivity extends AppCompatActivity {
 
@@ -22,10 +30,19 @@ public class LogInActivity extends AppCompatActivity {
 
     ClassRoomData classRoomData;
 
+    DatabaseReference mRef;
+
+    long backPressedTime;
+
+    boolean isSignedIn;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        backPressedTime = 0;
+        isSignedIn = false;
 
         login_id = findViewById(R.id.login_id);
         login_pw = findViewById(R.id.login_pw);
@@ -33,6 +50,7 @@ public class LogInActivity extends AppCompatActivity {
         btn_register = findViewById(R.id.register);
 
         classRoomData = new ClassRoomData();
+        mRef = FirebaseDatabase.getInstance().getReference();
 
         btn_login_submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,35 +62,44 @@ public class LogInActivity extends AppCompatActivity {
                     classRoomData.setUserId(Integer.valueOf(login_id.getText().toString()));
                     classRoomData.setUserPw(login_pw.getText().toString());
 
-                    // TODO: ▼ ▼ ▼  등록된 테스트 이메일 입력  ▼ ▼ ▼
-                    classRoomData.setUserEmail("13circle97@gmail.com"); // TODO: Just for test. MUST BE REMOVED LATER.
-                    // TODO: ▲ ▲ ▲  등록된 테스트 이메일 입력  ▲ ▲ ▲
+                    mRef.child("logInStatus").child(String.valueOf(classRoomData.getUserId())).setValue(true);
 
-                    //classRoomData.readJSON(); // TODO: MUST verify whether a following ID matches to the user
+                    mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            classRoomData.setUserEmail(dataSnapshot.child("users").child(String.valueOf(classRoomData.getUserId())).child("userEmail").getValue(String.class));
+                            if(classRoomData.getUserEmail().isEmpty()) { Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show(); return; }
+                            Toast.makeText(getApplicationContext(), "로그인 되었습니다.", Toast.LENGTH_SHORT).show(); isSignedIn = true;
+                            FirebaseAuth auth = FirebaseAuth.getInstance();
+                            auth.signInWithEmailAndPassword(classRoomData.getUserEmail(), classRoomData.getUserPw())
+                                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            if (task.isSuccessful()) {
+                                                Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
+                                                Bundle bundle = new Bundle();
+                                                bundle.putSerializable("classRoomData", classRoomData);
+                                                intent.putExtras(bundle);
+                                                startActivity(intent);
+                                            } else {
+                                                Toast.makeText(getApplicationContext(), "해당 계정이 없거나 잘못된 ID/PW 입니다", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                        }
 
-                    FirebaseAuth auth = FirebaseAuth.getInstance();
-                    auth.signInWithEmailAndPassword(classRoomData.getUserEmail(), classRoomData.getUserPw())
-                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-                                        Bundle bundle = new Bundle();
-                                        bundle.putSerializable("classRoomData", classRoomData);
-                                        intent.putExtras(bundle);
-                                        startActivity(intent);
-                                    } else {
-                                        Toast.makeText(getApplicationContext(), "해당 계정이 없거나 잘못된 ID/PW 입니다", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            Toast.makeText(getApplicationContext(), "계정이 없습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+
                 } else {
 
                     Toast.makeText(getApplicationContext(), "ID/PW 를 입력해주세요", Toast.LENGTH_SHORT).show();
 
                 }
-
-                //
 
             }
         });
@@ -86,4 +113,27 @@ public class LogInActivity extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    public void onBackPressed() {
+        // TODO: Build It! Debug It!
+        if(backPressedTime == 0) {
+            Toast.makeText(getApplicationContext(), "한 번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
+            backPressedTime = System.currentTimeMillis();
+        } else {
+            int seconds = (int) (System.currentTimeMillis() - backPressedTime);
+            if(seconds > 2000) {
+                Toast.makeText(getApplicationContext(), "한 번 더 누르면 종료됩니다." , Toast.LENGTH_SHORT).show();
+                backPressedTime = 0;
+            } else {
+                if(isSignedIn) {
+                    mRef.child("logInStatus").child(String.valueOf(String.valueOf(classRoomData.getUserId()))).setValue(false);
+                    FirebaseAuth.getInstance().signOut();
+                }
+                super.onBackPressed();
+            }
+        }
+
+    }
+
 }

@@ -19,6 +19,8 @@ import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -117,7 +119,12 @@ public class MembershipActivity extends AppCompatActivity {
                         classRoomData.setPhoneNumber(phone_number.getText().toString());
                         classRoomData.setUserEmail(email_register.getText().toString());
 
-                        //classRoomData.writeJSON();
+                        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
+                        mRef.child("users").child(String.valueOf(classRoomData.getUserId())).child("userEmail").setValue(classRoomData.getUserEmail());
+                        mRef.child("users").child(String.valueOf(classRoomData.getUserId())).child("userPw").setValue(classRoomData.getUserPw());
+                        mRef.child("users").child(String.valueOf(classRoomData.getUserId())).child("userName").setValue(classRoomData.getUserName());
+                        mRef.child("users").child(String.valueOf(classRoomData.getUserId())).child("phoneNumber").setValue(classRoomData.getPhoneNumber());
+                        mRef.child("logInStatus"). child(String.valueOf(classRoomData.getUserId())).setValue(false);
 
                         Toast.makeText(getApplicationContext(), "가입되셨습니다", Toast.LENGTH_SHORT).show();
                         finish();

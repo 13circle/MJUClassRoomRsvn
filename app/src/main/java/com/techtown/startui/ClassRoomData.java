@@ -2,6 +2,9 @@ package com.techtown.startui;
 
 import android.content.Context;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -79,7 +82,6 @@ public class ClassRoomData implements Serializable {
         this.startTime = 0;
         this.endTime = 0;
         this.usage = "";
-
     }
     public ClassRoomData(int userId, String userPw) {                      // 사용자 계정 정보 초기화 생성자
         this();     // 초기화
