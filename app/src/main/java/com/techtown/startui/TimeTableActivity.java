@@ -13,7 +13,15 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import org.w3c.dom.Text;
+
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.PriorityQueue;
 
 public class TimeTableActivity extends AppCompatActivity {
 
@@ -22,6 +30,8 @@ public class TimeTableActivity extends AppCompatActivity {
     Boolean isAllSelected;
     ClassRoomData classRoomData;
     int prev_i, prev_j;
+
+    PriorityQueue<TextView> PQ;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,6 +46,8 @@ public class TimeTableActivity extends AppCompatActivity {
         classRoomData = (ClassRoomData)intent.getSerializableExtra("classRoomData");
 
         time_table_banner.setText(classRoomData.getYear() + "년 " + (classRoomData.getMonth() + 1) + "월 " + classRoomData.getDate() + "일");
+
+        PQ = new PriorityQueue<TextView>();
 
         final int init_hr = 9;
         final int fin_hr = 20;
@@ -67,9 +79,9 @@ public class TimeTableActivity extends AppCompatActivity {
                         String[] indexStrArr = indexStr.split(",");
                         int i = Integer.valueOf(indexStrArr[0]), j = Integer.valueOf(indexStrArr[1]);
 
-                        TextView cell = (TextView) ((TableRow)time_table.getChildAt(i)).getChildAt(j);
-                        if((j == prev_j || prev_j == 0) && (prev_i <= i)) {
 
+                            TextView cell = (TextView) ((TableRow)time_table.getChildAt(i)).getChildAt(j);
+                            if((j == prev_j || prev_j == 0) && (prev_i <= i)) {
                             TextView selection_message = findViewById(R.id.selection_message);
                             RelativeLayout to_reservation = findViewById(R.id.to_reservation);
 
@@ -122,6 +134,17 @@ public class TimeTableActivity extends AppCompatActivity {
         confirm_reserve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //TextView cell = (TextView) ((TableRow)time_table.getChildAt(i)).getChildAt(j);
+
+                DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
+                DatabaseReference myResvList = mRef.child("users").child(String.valueOf(classRoomData.getUserId())).child("myResvList");
+                DatabaseReference calendarRef = mRef.child("calendar").child(classRoomData.getYear() + "_" + (classRoomData.getMonth() + 1)).child(String.valueOf(classRoomData.getDate()));
+                DatabaseReference resvRef = mRef.child("reservations");
+                String key = myResvList.push().getKey();
+                myResvList.child(key).setValue(true); calendarRef.child(key).setValue(true);
+                resvRef.child(key).child("userId").setValue(classRoomData.getUserId());
+
                 Intent intent = new Intent(getApplicationContext(), ReservationActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("classRoomData", classRoomData);
@@ -157,5 +180,18 @@ public class TimeTableActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private int[] parse_txtv_tag() {
+
+        int[] startEndTimes = new int[2];
+        /*
+        String indexStr = view.getTag().toString();
+        indexStr = indexStr.substring(indexStr.indexOf(":") + 1);
+        String[] indexStrArr = indexStr.split(",");
+        int i = Integer.valueOf(indexStrArr[0]), j = Integer.valueOf(indexStrArr[1]);
+
+         */
+        return startEndTimes;
     }
 }
