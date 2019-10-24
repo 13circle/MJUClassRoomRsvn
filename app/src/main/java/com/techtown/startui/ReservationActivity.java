@@ -7,7 +7,7 @@ import android.widget.Spinner;
 
 public class ReservationActivity extends AppCompatActivity {
 
-    private Spinner spinner;
+    Spinner spinner;
     ClassRoomData classRoomData;
 
     @Override

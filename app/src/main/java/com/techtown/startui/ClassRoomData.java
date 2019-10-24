@@ -133,8 +133,9 @@ public class ClassRoomData implements Serializable {
         return wkDayStr;
     }
 
+/* TODO: JSON-Oriented Methods Deprecated - DO NOT USE THESE METHODS!
 
-    /* JSON 관련 메소드 */
+    // JSON 관련 메소드
     public JSONObject getJSON() {                                                   // 속성들을 JSON 형태로 변환 후 반환
 
         JSONObject jsonObject = new JSONObject();
@@ -211,6 +212,8 @@ public class ClassRoomData implements Serializable {
         }
 
     }
+
+*/
 
 }
 
