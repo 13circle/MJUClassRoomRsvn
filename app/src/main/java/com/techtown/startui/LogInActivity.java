@@ -50,7 +50,6 @@ public class LogInActivity extends AppCompatActivity {
         btn_register = findViewById(R.id.register);
 
         classRoomData = new ClassRoomData();
-        mRef = FirebaseDatabase.getInstance().getReference();
 
         btn_login_submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,18 +60,18 @@ public class LogInActivity extends AppCompatActivity {
                     classRoomData.setUserId(Integer.valueOf(login_id.getText().toString()));
                     classRoomData.setUserPw(login_pw.getText().toString());
 
+                    mRef = FirebaseDatabase.getInstance().getReference();
+
                     mRef.child("logInStatus").child(String.valueOf(classRoomData.getUserId())).setValue(true);
 
                     mRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            classRoomData.setUserEmail(dataSnapshot.child("users").child(String.valueOf(classRoomData.getUserId())).child("userEmail").getValue(String.class));
+                            classRoomData.setUserEmail(dataSnapshot.child("idToEmail").child(String.valueOf(classRoomData.getUserId())).getValue(String.class));
                             if(classRoomData.getUserEmail().isEmpty()) {
                                 Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
                                 mRef.child("logInStatus").child(String.valueOf(classRoomData.getUserId())).setValue(false);
                                 return;
-                            } else {
-                                classRoomData.setUserName(dataSnapshot.child("users").child(String.valueOf(classRoomData.getUserId())).child("userName").getValue(String.class));
                             }
                             FirebaseAuth auth = FirebaseAuth.getInstance();
                             auth.signInWithEmailAndPassword(classRoomData.getUserEmail(), classRoomData.getUserPw())
@@ -80,7 +79,7 @@ public class LogInActivity extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<AuthResult> task) {
                                             if (task.isSuccessful()) {
-                                                Toast.makeText(getApplicationContext(), classRoomData.getUserName() + " 님께서 로그인 하셨습니다", Toast.LENGTH_SHORT).show(); isSignedIn = true;
+                                                isSignedIn = true;
                                                 Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
                                                 Bundle bundle = new Bundle();
                                                 bundle.putSerializable("classRoomData", classRoomData);
@@ -96,7 +95,7 @@ public class LogInActivity extends AppCompatActivity {
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
-                            Toast.makeText(getApplicationContext(), "해당 계정이 없거나 잘못된 ID/PW 입니다", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "해당 계정이 없거나 잘못된 ID/PW 입니다!", Toast.LENGTH_SHORT).show();
                         }
                     });
 
@@ -132,7 +131,7 @@ public class LogInActivity extends AppCompatActivity {
                 backPressedTime = 0;
             } else {
                 if(isSignedIn) {
-                    mRef.child("logInStatus").child(String.valueOf(String.valueOf(classRoomData.getUserId()))).setValue(false);
+                    mRef.child("logInStatus").child(String.valueOf(classRoomData.getUserId())).setValue(false);
                 }
                 super.onBackPressed();
             }
