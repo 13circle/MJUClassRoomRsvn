@@ -45,6 +45,7 @@ public class MembershipActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
     FirebaseUser user;
+    DatabaseReference mRef;
 
     boolean isVerificationSent;
 
@@ -58,6 +59,8 @@ public class MembershipActivity extends AppCompatActivity {
         classRoomData = new ClassRoomData();
 
         auth = FirebaseAuth.getInstance();
+
+        mRef = FirebaseDatabase.getInstance().getReference();
 
         isVerificationSent = false;
 
@@ -119,7 +122,6 @@ public class MembershipActivity extends AppCompatActivity {
                         classRoomData.setPhoneNumber(phone_number.getText().toString());
                         classRoomData.setUserEmail(email_register.getText().toString());
 
-                        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
                         DatabaseReference userRef = mRef.child("users").child(String.valueOf(classRoomData.getUserId()));
                         userRef.child("userEmail").setValue(classRoomData.getUserEmail());
                         userRef.child("userPw").setValue(classRoomData.getUserPw());

@@ -3,9 +3,15 @@ package com.techtown.startui;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
@@ -13,14 +19,20 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.PriorityQueue;
 
 public class TimeTableActivity extends AppCompatActivity {
@@ -29,9 +41,14 @@ public class TimeTableActivity extends AppCompatActivity {
     ArrayList<TextView> selectedCells;
     Boolean isAllSelected;
     ClassRoomData classRoomData;
+    int numClassRoom;
     int prev_i, prev_j;
 
-    PriorityQueue<TextView> PQ;
+    DatabaseReference mRef, calendarRef;
+
+    ArrayList<PriorityQueue<Reservation>> pqList;
+    HashMap<String, Integer> crMap;
+    HashMap<Integer, Integer> timeMap;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,14 +64,25 @@ public class TimeTableActivity extends AppCompatActivity {
 
         time_table_banner.setText(classRoomData.getYear() + "년 " + (classRoomData.getMonth() + 1) + "월 " + classRoomData.getDate() + "일");
 
-        PQ = new PriorityQueue<TextView>();
-
         final int init_hr = 9;
         final int fin_hr = 20;
 
         prev_i = prev_j = 0; isAllSelected = false;
 
-        for(int i = 1, hr = init_hr, clen = ((TableRow)time_table.getChildAt(0)).getChildCount(); hr < fin_hr; hr++, i++) {
+        String yr_mth = classRoomData.getYear() + "_" + (classRoomData.getMonth() + 1);
+        String date = String.valueOf(classRoomData.getDate());
+
+        mRef = FirebaseDatabase.getInstance().getReference();
+
+        calendarRef = mRef.child("calendar").child(yr_mth).child(date);
+
+        mRef.child("logInStatus").child(String.valueOf(classRoomData.getUserId())).setValue(true);
+
+        numClassRoom = ((TableRow)time_table.getChildAt(0)).getChildCount() - 1;
+
+        pqList = new ArrayList<>(); timeMap = new HashMap<>(); crMap = new HashMap<>();
+
+        for(int i = 1, clen = numClassRoom + 1, hr = init_hr; hr < fin_hr; hr++, i++) {
 
             TableRow tr = new TableRow(this);
             TextView tv = new TextView(this);
@@ -80,16 +108,13 @@ public class TimeTableActivity extends AppCompatActivity {
                         int i = Integer.valueOf(indexStrArr[0]), j = Integer.valueOf(indexStrArr[1]);
 
 
-                            TextView cell = (TextView) ((TableRow)time_table.getChildAt(i)).getChildAt(j);
+                            TextView cell = getCellFromTable(i, j);
                             if((j == prev_j || prev_j == 0) && (prev_i <= i)) {
                             TextView selection_message = findViewById(R.id.selection_message);
                             RelativeLayout to_reservation = findViewById(R.id.to_reservation);
 
                             if (isAllSelected) {
-                                for (int c = 0; c < selectedCells.size(); c++) {
-                                    selectedCells.get(c).setSelected(false);
-                                }
-                                selectedCells.clear();
+                                cancel_selection();
                                 prev_i = prev_j = 0;
                                 isAllSelected = false;
 
@@ -105,7 +130,7 @@ public class TimeTableActivity extends AppCompatActivity {
 
                                 } else {
                                     for (int c = prev_i + 1; c <= i; c++) {
-                                        TextView tv = (TextView) ((TableRow) time_table.getChildAt(c)).getChildAt(j);
+                                        TextView tv = getCellFromTable(c, j);
                                         tv.setSelected(true);
                                         selectedCells.add(tv);
                                     }
@@ -130,26 +155,65 @@ public class TimeTableActivity extends AppCompatActivity {
 
         }
 
+        for(int i = 0; i < numClassRoom; pqList.add(new PriorityQueue<Reservation>()), i++);
+        for(int i = 1; i <= numClassRoom; crMap.put(getCellFromTable(0, i++).getText().toString(), i));
+        for(int i = 1, hr = init_hr; hr < fin_hr; timeMap.put(parse_time_range_by_row_index(i)[0], i++), hr++);
+
+        mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                DataSnapshot rsvnRef = dataSnapshot.child("reservations");
+                DataSnapshot calendarRef = dataSnapshot.child("calendar").child(classRoomData.getYear() + "_" + (classRoomData.getMonth() + 1))
+                        .child(String.valueOf(classRoomData.getDate()));
+                for(DataSnapshot rsvnSnapshot : calendarRef.getChildren()) {
+                    DataSnapshot tmpRef = rsvnRef.child(rsvnSnapshot.getKey());
+                    ClassRoomData crData = new ClassRoomData((Calendar) classRoomData.getCalendar().clone());
+                    crData.setUserId(tmpRef.child("userId").getValue(Integer.class));
+                    crData.setUserName(tmpRef.child("userName").getValue(String.class));
+                    crData.setClassRoom(tmpRef.child("classRoom").getValue(String.class));
+                    crData.setStartTime(tmpRef.child("startTime").getValue(Long.class));
+                    crData.setEndTime(tmpRef.child("endTime").getValue(Long.class));
+                    crData.setNumUsers(tmpRef.child("numUsers").getValue(Integer.class));
+                    crData.setUsage(tmpRef.child("usage").getValue(String.class));
+                    pqList.get(crMap.get(crData.getClassRoom())).add(new Reservation(crData));
+                }
+                //TODO: L1:pqList // L2:PrimaryQueue<Reservation> to writeRsvnToTableCell(rsvn)
+                for(int i = 0, size = pqList.size(); i < size; i++) {
+                    for (Reservation rsvn : pqList.get(i)) {
+                        writeRsvnToTableCell(rsvn);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                //
+            }
+        });
+
         Button confirm_reserve = findViewById(R.id.confirm_reserve);
         confirm_reserve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                //TextView cell = (TextView) ((TableRow)time_table.getChildAt(i)).getChildAt(j);
+                TextView classRoom = getCellFromTable(0, parse_tag(selectedCells.get(0).getTag().toString())[1]);
+                classRoomData.setClassRoom(classRoom.getText().toString());
 
-                DatabaseReference mRef = FirebaseDatabase.getInstance().getReference();
-                DatabaseReference myResvList = mRef.child("users").child(String.valueOf(classRoomData.getUserId())).child("myResvList");
-                DatabaseReference calendarRef = mRef.child("calendar").child(classRoomData.getYear() + "_" + (classRoomData.getMonth() + 1)).child(String.valueOf(classRoomData.getDate()));
-                DatabaseReference resvRef = mRef.child("reservations");
-                String key = myResvList.push().getKey();
-                myResvList.child(key).setValue(true); calendarRef.child(key).setValue(true);
-                resvRef.child(key).child("userId").setValue(classRoomData.getUserId());
+                int[] startTimeIndices = parse_tag(selectedCells.get(0).getTag().toString());
+                int[] endTimeIndices = parse_tag(selectedCells.get(selectedCells.size() - 1).getTag().toString());
+
+                int startTime = parse_time_range_by_row_index(startTimeIndices[0])[0];
+                int endTime = parse_time_range_by_row_index(endTimeIndices[0])[1];
+
+                classRoomData.setStartTimeByHour(startTime);
+                classRoomData.setEndTimeByHour(endTime);
 
                 Intent intent = new Intent(getApplicationContext(), ReservationActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("classRoomData", classRoomData);
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivityForResult(intent, 3000);
+
             }
         });
 
@@ -157,13 +221,9 @@ public class TimeTableActivity extends AppCompatActivity {
         cancel_reserve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                for(int c = 0; c < selectedCells.size(); c++) {
-                    selectedCells.get(c).setSelected(false);
-                }
-                selectedCells.clear();
+                cancel_selection();
                 prev_i = prev_j = 0;
                 isAllSelected = false;
-
                 findViewById(R.id.to_reservation).setVisibility(View.INVISIBLE);
             }
         });
@@ -182,16 +242,131 @@ public class TimeTableActivity extends AppCompatActivity {
 
     }
 
-    private int[] parse_txtv_tag() {
+    private void cancel_selection() {
+        for(int i = 0; i < selectedCells.size(); i++) {
+            selectedCells.get(i).setSelected(false);
+        }
+        selectedCells.clear();
+    }
 
+    private int[] parse_tag(String tagStr) {
         int[] startEndTimes = new int[2];
-        /*
-        String indexStr = view.getTag().toString();
-        indexStr = indexStr.substring(indexStr.indexOf(":") + 1);
-        String[] indexStrArr = indexStr.split(",");
+        String[] indexStrArr = tagStr.substring(tagStr.indexOf(":") + 1).split(",");
         int i = Integer.valueOf(indexStrArr[0]), j = Integer.valueOf(indexStrArr[1]);
-
-         */
+        startEndTimes[0] = i; startEndTimes[1] = j;
         return startEndTimes;
+    }
+
+    private int[] parse_time_range(String timeRange) {
+        int[] timeRanges = new int[2];
+        String[] timeRangeStrs;
+        //XX:00~YY:00 >> XX:~YY: >> XX~YY >> [XX, YY]
+        timeRange = timeRange.replace("0", "");
+        timeRange = timeRange.replace(":", "");
+        timeRangeStrs = timeRange.split("~");
+        timeRanges[0] = Integer.valueOf(timeRangeStrs[0]);
+        timeRanges[1] = Integer.valueOf(timeRangeStrs[1]);
+        return timeRanges;
+    }
+
+    private int[] parse_time_range_by_row_index(int row_index) {
+        return parse_time_range(getCellFromTable(row_index, 0).getText().toString());
+    }
+
+    private TextView getCellFromTable(int i, int j) {
+        return (TextView) ((TableRow)time_table.getChildAt(i)).getChildAt(j);
+    }
+
+    private void writeRsvnToTableCell(Reservation rsvn) {
+        int init_i = timeMap.get(rsvn.getStartHour());
+        int fin_i = timeMap.get(rsvn.getEndHour() - 1);
+        int j = crMap.get(rsvn.getClassRoom());
+        for(int i = init_i; i <= fin_i; i++) {
+            getCellFromTable(i, j).setText(String.valueOf(rsvn.getUserId()));
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case 3000:
+                    classRoomData = (ClassRoomData)data.getSerializableExtra("classRoomData");
+
+                    DatabaseReference myResvList = mRef.child("users").child(String.valueOf(classRoomData.getUserId())).child("myResvList");
+                    DatabaseReference resvRef = mRef.child("reservations");
+                    String key = myResvList.push().getKey();
+                    myResvList.child(key).setValue(true); calendarRef.child(key).setValue(true);
+                    resvRef.child(key).child("userId").setValue(classRoomData.getUserId());
+                    resvRef.child(key).child("userName").setValue(classRoomData.getUserName());
+                    resvRef.child(key).child("phoneNumber").setValue(classRoomData.getPhoneNumber());
+                    resvRef.child(key).child("classRoom").setValue(classRoomData.getClassRoom());
+                    resvRef.child(key).child("startTime").setValue(classRoomData.getStartTime());
+                    resvRef.child(key).child("endTime").setValue(classRoomData.getEndTime());
+                    resvRef.child(key).child("numUsers").setValue(classRoomData.getNumUsers());
+                    resvRef.child(key).child("usage").setValue(classRoomData.getUsage());
+
+                    mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            DataSnapshot rsvnRef = dataSnapshot.child("reservations");
+                            DataSnapshot calendarRef = dataSnapshot.child("calendar").child(classRoomData.getYear() + "_" + (classRoomData.getMonth() + 1))
+                                    .child(String.valueOf(classRoomData.getDate()));
+                            for(DataSnapshot rsvnSnapshot : calendarRef.getChildren()) {
+                                DataSnapshot tmpRef = rsvnRef.child(rsvnSnapshot.getKey());
+                                ClassRoomData crData = new ClassRoomData((Calendar) classRoomData.getCalendar().clone());
+                                crData.setUserId(tmpRef.child("userId").getValue(Integer.class));
+                                crData.setUserName(tmpRef.child("userName").getValue(String.class));
+                                crData.setClassRoom(tmpRef.child("classRoom").getValue(String.class));
+                                crData.setStartTime(tmpRef.child("startTime").getValue(Long.class));
+                                crData.setEndTime(tmpRef.child("endTime").getValue(Long.class));
+                                crData.setNumUsers(tmpRef.child("numUsers").getValue(Integer.class));
+                                crData.setUsage(tmpRef.child("usage").getValue(String.class));
+                                pqList.get(crMap.get(crData.getClassRoom())).add(new Reservation(crData));
+                                //
+                            }
+                            //
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            //
+                        }
+                    });
+
+                    cancel_selection();
+                    prev_i = prev_j = 0;
+                    isAllSelected = false;
+                    findViewById(R.id.to_reservation).setVisibility(View.INVISIBLE);
+
+                    break;
+            }
+        } else if(resultCode == RESULT_CANCELED) {
+            switch (requestCode) {
+                case 3000:
+
+                    Toast.makeText(getApplicationContext(), "예약이 취소되었습니다.", Toast.LENGTH_SHORT).show();
+
+                    cancel_selection();
+                    prev_i = prev_j = 0;
+                    isAllSelected = false;
+                    findViewById(R.id.to_reservation).setVisibility(View.INVISIBLE);
+
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(selectedCells.size() > 0) {
+            cancel_selection();
+            prev_i = prev_j = 0;
+            isAllSelected = false;
+            findViewById(R.id.selection_message).setVisibility(View.INVISIBLE);
+            findViewById(R.id.to_reservation).setVisibility(View.INVISIBLE);
+        }
+        super.onBackPressed();
     }
 }

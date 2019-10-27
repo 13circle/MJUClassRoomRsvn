@@ -66,7 +66,7 @@ public class LogInActivity extends AppCompatActivity {
 
                     mRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
                             classRoomData.setUserEmail(dataSnapshot.child("idToEmail").child(String.valueOf(classRoomData.getUserId())).getValue(String.class));
                             if(classRoomData.getUserEmail().isEmpty()) {
                                 Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
@@ -80,6 +80,9 @@ public class LogInActivity extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<AuthResult> task) {
                                             if (task.isSuccessful()) {
                                                 isSignedIn = true;
+                                                DataSnapshot userRef = dataSnapshot.child("users").child(String.valueOf(classRoomData.getUserId()));
+                                                classRoomData.setPhoneNumber(userRef.child("phoneNumber").getValue(String.class));
+                                                classRoomData.setUserName(userRef.child("userName").getValue(String.class));
                                                 Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
                                                 Bundle bundle = new Bundle();
                                                 bundle.putSerializable("classRoomData", classRoomData);
