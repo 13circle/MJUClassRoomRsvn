@@ -177,12 +177,16 @@ public class TimeTableActivity extends AppCompatActivity {
                     crData.setUsage(tmpRef.child("usage").getValue(String.class));
                     pqList.get(crMap.get(crData.getClassRoom())).add(new Reservation(crData));
                 }
+
                 //TODO: L1:pqList // L2:PrimaryQueue<Reservation> to writeRsvnToTableCell(rsvn)
-                for(int i = 0, size = pqList.size(); i < size; i++) {
-                    for (Reservation rsvn : pqList.get(i)) {
-                        writeRsvnToTableCell(rsvn);
+                /*
+                for(int i = 1, size = pqList.size(); i <= size; i++) {
+                    while (!pqList.get(i).isEmpty()) {
+                        //writeRsvnToTableCell(pqList.get(i).poll());
+
                     }
                 }
+                */
             }
 
             @Override
@@ -278,11 +282,13 @@ public class TimeTableActivity extends AppCompatActivity {
     }
 
     private void writeRsvnToTableCell(Reservation rsvn) {
-        int init_i = timeMap.get(rsvn.getStartHour());
-        int fin_i = timeMap.get(rsvn.getEndHour() - 1);
-        int j = crMap.get(rsvn.getClassRoom());
-        for(int i = init_i; i <= fin_i; i++) {
-            getCellFromTable(i, j).setText(String.valueOf(rsvn.getUserId()));
+        if(rsvn != null) {
+            int init_i = timeMap.get(rsvn.getStartHour());
+            int fin_i = timeMap.get(rsvn.getEndHour() - 1);
+            int j = crMap.get(rsvn.getClassRoom());
+            for (int i = init_i; i <= fin_i; i++) {
+                getCellFromTable(i, j).setText(String.valueOf(rsvn.getUserId()));
+            }
         }
     }
 
