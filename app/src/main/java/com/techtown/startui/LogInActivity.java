@@ -62,15 +62,18 @@ public class LogInActivity extends AppCompatActivity {
 
                     mRef = FirebaseDatabase.getInstance().getReference();
 
-                    mRef.child("logInStatus").child(String.valueOf(classRoomData.getUserId())).setValue(true);
+                    mRef.child("trigger").setValue(true);
 
                     mRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                            if(!dataSnapshot.child("idToEmail").hasChild(String.valueOf(classRoomData.getUserId()))) {
+                                Toast.makeText(getApplicationContext(), "해당 아이디로 등록된 계정이 없습니다.", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
                             classRoomData.setUserEmail(dataSnapshot.child("idToEmail").child(String.valueOf(classRoomData.getUserId())).getValue(String.class));
                             if(classRoomData.getUserEmail().isEmpty()) {
                                 Toast.makeText(getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                                mRef.child("logInStatus").child(String.valueOf(classRoomData.getUserId())).setValue(false);
                                 return;
                             }
                             FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -90,7 +93,6 @@ public class LogInActivity extends AppCompatActivity {
                                                 startActivity(intent);
                                             } else {
                                                 Toast.makeText(getApplicationContext(), "해당 계정이 없거나 잘못된 ID/PW 입니다", Toast.LENGTH_SHORT).show();
-                                                mRef.child("logInStatus").child(String.valueOf(classRoomData.getUserId())).setValue(false);
                                             }
                                         } // onComplete - OnCompleteListener<AuthResult>
                                     }); // signInWithEmailAndPassword
@@ -133,9 +135,6 @@ public class LogInActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "한 번 더 누르면 종료됩니다." , Toast.LENGTH_SHORT).show();
                 backPressedTime = 0;
             } else {
-                if(isSignedIn) {
-                    mRef.child("logInStatus").child(String.valueOf(classRoomData.getUserId())).setValue(false);
-                }
                 super.onBackPressed();
             }
         }

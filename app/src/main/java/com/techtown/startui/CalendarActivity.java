@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +14,12 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 
@@ -22,6 +30,8 @@ public class CalendarActivity extends AppCompatActivity {
     TextView prev_month, mth_banner, next_month;
     ClassRoomData classRoomData;
     final MyDateObj mdo = new MyDateObj();
+
+    DatabaseReference mRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +47,8 @@ public class CalendarActivity extends AppCompatActivity {
         next_month = findViewById(R.id.next_month);
         calendar = Calendar.getInstance();
 
+        mRef = FirebaseDatabase.getInstance().getReference();
+
         setBannerMthCurrent();
 
         for(int i = 2, li = calendar_view.getChildCount(); i < li; i++) {
@@ -50,12 +62,15 @@ public class CalendarActivity extends AppCompatActivity {
                 cal_date.setClickable(true); cal_date.setOrientation(LinearLayout.VERTICAL);
 
                 TextView tv = new TextView(this);
-                tv.setWidth(100);
+                TextView rsvn_tv = new TextView(this);
+                tv.setWidth(100); rsvn_tv.setWidth(100);
                 tv.setPadding(10, 0, 0, 0);
+                rsvn_tv.setPadding(10, 0, 0, 0);
                 tv.setTextColor(Color.rgb(255, 255, 255));
-                tv.setText("");
+                rsvn_tv.setTextColor(Color.rgb(255, 255, 255));
+                tv.setText(""); rsvn_tv.setText("");
 
-                cal_date.addView(tv);
+                cal_date.addView(tv); cal_date.addView(rsvn_tv);
                 cal_date.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -82,7 +97,7 @@ public class CalendarActivity extends AppCompatActivity {
                                     Bundle bundle = new Bundle();
                                     bundle.putSerializable("classRoomData", classRoomData);
                                     intent.putExtras(bundle);
-                                    startActivity(intent);
+                                    startActivityForResult(intent, 1000);
                             }
 
                         }
@@ -123,7 +138,7 @@ public class CalendarActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("classRoomData", classRoomData);
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivityForResult(intent, 1000);
 
             }
         });
@@ -166,8 +181,10 @@ public class CalendarActivity extends AppCompatActivity {
             for(int j = 0; j < 7; j++) {
 
                 TextView tv = (TextView)((LinearLayout) tr.getChildAt(j)).getChildAt(0);
+                TextView rsvn_tv = (TextView)((LinearLayout) tr.getChildAt(j)).getChildAt(0);
 
                 tv.setText("");
+                rsvn_tv.setText("");
 
             }
 
@@ -181,23 +198,56 @@ public class CalendarActivity extends AppCompatActivity {
 
             for(int j = (i == 2) ? (mdo.getFirstDayOfWeek() - 1) : 0, dMax = mdo.getLastDayOfMonth(); j < 7 && dCnt <= dMax; j++, dCnt++) {
 
-                LinearLayout ll = (LinearLayout) tr.getChildAt(j);
+                final LinearLayout ll = (LinearLayout) tr.getChildAt(j);
 
                 TextView tv = (TextView)ll.getChildAt(0);
 
                 int yr = cal.get(Calendar.YEAR), yr2 = mdo.getCalendar().get(Calendar.YEAR);
                 int mth = cal.get(Calendar.MONTH), mth2 = mdo.getCalendar().get(Calendar.MONTH);
-                int date = cal.get(Calendar.DAY_OF_MONTH);
+                int date = cal.get(Calendar.DAY_OF_MONTH); final int tDate = dCnt;
 
                 if(yr == yr2 && mth == mth2 && date == dCnt) ll.setBackgroundResource(R.drawable.calendar_cell_today_background);
                 else ll.setBackgroundResource(R.drawable.calendar_cell_background);
 
                 tv.setText(String.valueOf(dCnt));
 
+                mRef.child("trigger").setValue(true);
+
+                mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        TextView rsvn_tv = (TextView)ll.getChildAt(1);
+                        int yr = mdo.getCalendar().get(Calendar.YEAR);
+                        int mth = mdo.getCalendar().get(Calendar.MONTH) + 1;
+                        long cnt = dataSnapshot.child("calendar").child(yr + "_" + mth).child(String.valueOf(tDate)).getChildrenCount();
+                        if(cnt != 0) {
+                            rsvn_tv.setText("예약 " + cnt);
+                        } else {
+                            rsvn_tv.setText("");
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        //
+                    }
+                });
+
             }
 
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case 1000:
+                    moveMonth(0);
+                    break;
+            }
+        }
     }
 
     @Override

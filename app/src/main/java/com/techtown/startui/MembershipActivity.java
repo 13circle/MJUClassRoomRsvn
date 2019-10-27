@@ -127,7 +127,6 @@ public class MembershipActivity extends AppCompatActivity {
                         userRef.child("userPw").setValue(classRoomData.getUserPw());
                         userRef.child("userName").setValue(classRoomData.getUserName());
                         userRef.child("phoneNumber").setValue(classRoomData.getPhoneNumber());
-                        mRef.child("logInStatus"). child(String.valueOf(classRoomData.getUserId())).setValue(false);
                         mRef.child("idToEmail").child(String.valueOf(classRoomData.getUserId())).setValue(classRoomData.getUserEmail());
 
                         Toast.makeText(getApplicationContext(), "가입되셨습니다", Toast.LENGTH_SHORT).show();

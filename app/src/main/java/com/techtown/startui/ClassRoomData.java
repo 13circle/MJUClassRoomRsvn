@@ -140,7 +140,7 @@ public class ClassRoomData implements Serializable {
     public int getTimeInHour(long ms) {                                         // 달력 객체로 밀리초 단위 시간을 시간으로 반환
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(ms);
-        return cal.get(Calendar.HOUR_OF_DAY);
+        return cal.get(Calendar.HOUR_OF_DAY) + 1;
     }
     public int getStartTimeInHour() { return getTimeInHour(this.startTime); }   // 달력 객체로 이용 시작 시간을 반환
     public int getEndTimeInHour() { return getTimeInHour(this.endTime); }       // 달력 객체로 이용 종료 시간을 반환

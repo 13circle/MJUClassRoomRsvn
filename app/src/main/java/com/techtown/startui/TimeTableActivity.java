@@ -76,7 +76,7 @@ public class TimeTableActivity extends AppCompatActivity {
 
         calendarRef = mRef.child("calendar").child(yr_mth).child(date);
 
-        mRef.child("logInStatus").child(String.valueOf(classRoomData.getUserId())).setValue(true);
+        mRef.child("trigger").setValue(true);
 
         numClassRoom = ((TableRow)time_table.getChildAt(0)).getChildCount() - 1;
 
@@ -107,45 +107,48 @@ public class TimeTableActivity extends AppCompatActivity {
                         String[] indexStrArr = indexStr.split(",");
                         int i = Integer.valueOf(indexStrArr[0]), j = Integer.valueOf(indexStrArr[1]);
 
-
-                            TextView cell = getCellFromTable(i, j);
+                        TextView cell = getCellFromTable(i, j);
+                        if(cell.getText().toString().isEmpty()) {
                             if((j == prev_j || prev_j == 0) && (prev_i <= i)) {
-                            TextView selection_message = findViewById(R.id.selection_message);
-                            RelativeLayout to_reservation = findViewById(R.id.to_reservation);
+                                TextView selection_message = findViewById(R.id.selection_message);
+                                RelativeLayout to_reservation = findViewById(R.id.to_reservation);
+                                if (isAllSelected) {
+                                    cancel_selection();
+                                    prev_i = prev_j = 0;
+                                    isAllSelected = false;
 
-                            if (isAllSelected) {
-                                cancel_selection();
-                                prev_i = prev_j = 0;
-                                isAllSelected = false;
-
-                                selection_message.setVisibility(View.INVISIBLE);
-                                to_reservation.setVisibility(View.INVISIBLE);
-
-                            } else {
-                                if (selectedCells.size() == 0) {
-                                    selectedCells.add(cell);
-                                    cell.setSelected(true);
-
-                                    selection_message.setVisibility(View.VISIBLE);
+                                    selection_message.setVisibility(View.INVISIBLE);
+                                    to_reservation.setVisibility(View.INVISIBLE);
 
                                 } else {
-                                    for (int c = prev_i + 1; c <= i; c++) {
-                                        TextView tv = getCellFromTable(c, j);
-                                        tv.setSelected(true);
-                                        selectedCells.add(tv);
+                                    if (selectedCells.size() == 0) {
+                                        selectedCells.add(cell);
+                                        cell.setSelected(true);
+
+                                        selection_message.setVisibility(View.VISIBLE);
+
+                                    } else {
+                                        for (int c = prev_i + 1; c <= i; c++) {
+                                            TextView tv = getCellFromTable(c, j);
+                                            tv.setSelected(true);
+                                            selectedCells.add(tv);
+                                        }
+                                        isAllSelected = true;
+                                        selection_message.setVisibility(View.INVISIBLE);
+                                        to_reservation.setVisibility(View.VISIBLE);
                                     }
-                                    isAllSelected = true;
-                                    selection_message.setVisibility(View.INVISIBLE);
-                                    to_reservation.setVisibility(View.VISIBLE);
+                                    prev_i = i;
+                                    prev_j = j;
                                 }
-                                prev_i = i;
-                                prev_j = j;
+                            } else if(prev_i > i) {
+                                Toast.makeText(getApplicationContext(), "종료 시간은 시작 시간 뒤에 와야 합니다.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "같은 강의실의 시간대를 먼저 설정해주세요.", Toast.LENGTH_SHORT).show();
                             }
-                        } else if(prev_i > i) {
-                            Toast.makeText(getApplicationContext(), "종료 시간은 시작 시간 뒤에 와야 합니다.", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(getApplicationContext(), "같은 강의실의 시간대를 먼저 설정해주세요.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "이미 예약되어 있습니다.", Toast.LENGTH_SHORT).show();
                         }
+
                     }
                 });
                 tr.addView(tv);
@@ -156,7 +159,7 @@ public class TimeTableActivity extends AppCompatActivity {
         }
 
         for(int i = 0; i < numClassRoom; pqList.add(new PriorityQueue<Reservation>()), i++);
-        for(int i = 1; i <= numClassRoom; crMap.put(getCellFromTable(0, i++).getText().toString(), i));
+        for(int i = 1; i <= numClassRoom; crMap.put(getCellFromTable(0, i).getText().toString(), i++));
         for(int i = 1, hr = init_hr; hr < fin_hr; timeMap.put(parse_time_range_by_row_index(i)[0], i++), hr++);
 
         mRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -179,14 +182,13 @@ public class TimeTableActivity extends AppCompatActivity {
                 }
 
                 //TODO: L1:pqList // L2:PrimaryQueue<Reservation> to writeRsvnToTableCell(rsvn)
-                /*
-                for(int i = 1, size = pqList.size(); i <= size; i++) {
-                    while (!pqList.get(i).isEmpty()) {
-                        //writeRsvnToTableCell(pqList.get(i).poll());
 
+                for(int i = 0, size = pqList.size(); i < size; i++) {
+                    while (!pqList.get(i).isEmpty()) {
+                        writeRsvnToTableCell(pqList.get(i).poll());
                     }
                 }
-                */
+
             }
 
             @Override
@@ -240,7 +242,7 @@ public class TimeTableActivity extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("classRoomData", classRoomData);
                 intent.putExtras(bundle);
-                startActivity(intent);
+                startActivityForResult(intent, 2000);
             }
         });
 
@@ -264,10 +266,12 @@ public class TimeTableActivity extends AppCompatActivity {
     private int[] parse_time_range(String timeRange) {
         int[] timeRanges = new int[2];
         String[] timeRangeStrs;
-        //XX:00~YY:00 >> XX:~YY: >> XX~YY >> [XX, YY]
-        timeRange = timeRange.replace("0", "");
-        timeRange = timeRange.replace(":", "");
+        //XX:00~YY:00 >> XX:~YY: >> XX~YY
+        timeRange = timeRange.replaceAll("00", "");
+        timeRange = timeRange.replaceAll(":", "");
         timeRangeStrs = timeRange.split("~");
+        if(timeRangeStrs[0].charAt(0) == '0') timeRangeStrs[0] = timeRangeStrs[0].replaceFirst("0", "");
+        if(timeRangeStrs[1].charAt(0) == '0') timeRangeStrs[1] = timeRangeStrs[1].replaceFirst("0", "");
         timeRanges[0] = Integer.valueOf(timeRangeStrs[0]);
         timeRanges[1] = Integer.valueOf(timeRangeStrs[1]);
         return timeRanges;
@@ -286,8 +290,11 @@ public class TimeTableActivity extends AppCompatActivity {
             int init_i = timeMap.get(rsvn.getStartHour());
             int fin_i = timeMap.get(rsvn.getEndHour() - 1);
             int j = crMap.get(rsvn.getClassRoom());
+            TextView temp;
             for (int i = init_i; i <= fin_i; i++) {
-                getCellFromTable(i, j).setText(String.valueOf(rsvn.getUserId()));
+                temp = getCellFromTable(i, j);
+                temp.setText(String.valueOf(rsvn.getUserId()));
+                temp.setBackgroundResource(R.drawable.reserved_table_cell_background);
             }
         }
     }
@@ -332,7 +339,11 @@ public class TimeTableActivity extends AppCompatActivity {
                                 pqList.get(crMap.get(crData.getClassRoom())).add(new Reservation(crData));
                                 //
                             }
-                            //
+                            for(int i = 0, size = pqList.size(); i < size; i++) {
+                                while (!pqList.get(i).isEmpty()) {
+                                    writeRsvnToTableCell(pqList.get(i).poll());
+                                }
+                            }
                         }
 
                         @Override
@@ -346,6 +357,49 @@ public class TimeTableActivity extends AppCompatActivity {
                     isAllSelected = false;
                     findViewById(R.id.to_reservation).setVisibility(View.INVISIBLE);
 
+                    break;
+
+                case 2000:
+                    int clen = numClassRoom;
+                    int rlen = time_table.getChildCount() - 1;
+                    for(int i = 1; i < rlen; i++) {
+                        for(int j = 1; j < clen; j++) {
+                            TextView temp = getCellFromTable(i, j);
+                            temp.setText("");
+                            temp.setBackgroundResource(R.drawable.table_cell_background);
+                        }
+                    }
+                    mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            DataSnapshot rsvnRef = dataSnapshot.child("reservations");
+                            DataSnapshot calendarRef = dataSnapshot.child("calendar").child(classRoomData.getYear() + "_" + (classRoomData.getMonth() + 1))
+                                    .child(String.valueOf(classRoomData.getDate()));
+                            for(DataSnapshot rsvnSnapshot : calendarRef.getChildren()) {
+                                DataSnapshot tmpRef = rsvnRef.child(rsvnSnapshot.getKey());
+                                ClassRoomData crData = new ClassRoomData((Calendar) classRoomData.getCalendar().clone());
+                                crData.setUserId(tmpRef.child("userId").getValue(Integer.class));
+                                crData.setUserName(tmpRef.child("userName").getValue(String.class));
+                                crData.setClassRoom(tmpRef.child("classRoom").getValue(String.class));
+                                crData.setStartTime(tmpRef.child("startTime").getValue(Long.class));
+                                crData.setEndTime(tmpRef.child("endTime").getValue(Long.class));
+                                crData.setNumUsers(tmpRef.child("numUsers").getValue(Integer.class));
+                                crData.setUsage(tmpRef.child("usage").getValue(String.class));
+                                pqList.get(crMap.get(crData.getClassRoom())).add(new Reservation(crData));
+                                //
+                            }
+                            for(int i = 0, size = pqList.size(); i < size; i++) {
+                                while (!pqList.get(i).isEmpty()) {
+                                    writeRsvnToTableCell(pqList.get(i).poll());
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            //
+                        }
+                    });
                     break;
             }
         } else if(resultCode == RESULT_CANCELED) {
@@ -373,6 +427,12 @@ public class TimeTableActivity extends AppCompatActivity {
             findViewById(R.id.selection_message).setVisibility(View.INVISIBLE);
             findViewById(R.id.to_reservation).setVisibility(View.INVISIBLE);
         }
+        Intent resultIntent = new Intent();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("classRoomData", classRoomData);
+        resultIntent.putExtras(bundle);
+        setResult(RESULT_OK, resultIntent);
+        finish();
         super.onBackPressed();
     }
 }
