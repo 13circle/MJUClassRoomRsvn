@@ -15,6 +15,9 @@
         android:padding="15dp"
         android:background="@color/colorPrimaryDark"/>
 
+
+
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -32,9 +35,14 @@
                 android:stretchColumns="*">
 
                 <TableRow>
-                    <TextView
-                        android:gravity="center"
-                        android:background="@drawable/table_header_cell_background" />
+
+                    <Button
+                        android:id="@+id/button126"
+                        android:background="@drawable/table_header_cell_background"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="강의실 검색" />
+
                     <TextView
                         android:gravity="center"
                         android:background="@drawable/table_header_cell_background"
@@ -90,21 +98,61 @@
         android:id="@+id/selection_message"
         android:layout_width="match_parent"
         android:layout_height="43dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginLeft="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_marginStart="10dp"
-        android:paddingLeft="10dp"
-        android:paddingStart="10dp"
-        android:textColor="#000"
-        android:text="종료 시간을 선택하세요"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="9dp"
+        android:layout_marginEnd="-136dp"
+        android:layout_marginRight="-136dp"
+        android:background="@drawable/table_selection_message_background"
         android:gravity="center_vertical"
-        android:visibility="invisible"
-        android:background="@drawable/table_selection_message_background" />
+        android:paddingStart="10dp"
+        android:paddingLeft="10dp"
+        android:text="종료 시간을 선택하세요"
+        android:textColor="#000"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/selection_message2"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="9dp"
+        android:layout_marginEnd="-136dp"
+        android:layout_marginRight="-136dp"
+        android:background="@drawable/table_selection_message_background"
+        android:gravity="center_vertical"
+        android:paddingStart="10dp"
+        android:paddingLeft="10dp"
+        android:text="종료 시간을 선택하세요"
+        android:textColor="#000"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/selection_message3"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="9dp"
+        android:layout_marginEnd="-136dp"
+        android:layout_marginRight="-136dp"
+        android:background="@drawable/table_selection_message_background"
+        android:gravity="center_vertical"
+        android:paddingStart="10dp"
+        android:paddingLeft="10dp"
+        android:text="종료 시간을 선택하세요"
+        android:textColor="#000"
+        android:visibility="invisible" />
 
     <RelativeLayout
         android:id="@+id/to_reservation"

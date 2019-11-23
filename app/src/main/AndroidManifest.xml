@@ -9,6 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
+        <activity android:name=".searchActivity"></activity>
         <activity android:name=".EmailVerificationActivity" />
         <activity android:name=".ReservationActivity" />
         <activity android:name=".MyPageActivity" />
@@ -23,7 +24,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".MembershipActivity" />
-
     </application>
 
 </manifest>

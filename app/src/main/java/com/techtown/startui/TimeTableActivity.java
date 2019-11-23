@@ -55,6 +55,16 @@ public class TimeTableActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timetable);
 
+        Button button126=findViewById(R.id.button126);
+        button126.setOnClickListener(
+                new Button.OnClickListener(){
+                    public void onClick(View view){
+                        Intent intent=new Intent(getApplicationContext(), searchActivity.class);
+                        startActivity(intent);
+                    }
+                }
+        );
+
         TextView time_table_banner = findViewById(R.id.time_table_banner);
         time_table = findViewById(R.id.time_table);
         selectedCells = new ArrayList<>();
