@@ -7,11 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
@@ -25,15 +22,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.PriorityQueue;
 
 public class TimeTableActivity extends AppCompatActivity {
 
@@ -46,7 +37,7 @@ public class TimeTableActivity extends AppCompatActivity {
 
     DatabaseReference mRef, calendarRef;
 
-    ArrayList<PriorityQueue<Reservation>> pqList;
+    ArrayList<ArrayList<ClassRoomData>> cdList;
     HashMap<String, Integer> crMap;
     HashMap<Integer, Integer> timeMap;
 
@@ -90,7 +81,7 @@ public class TimeTableActivity extends AppCompatActivity {
 
         numClassRoom = ((TableRow)time_table.getChildAt(0)).getChildCount() - 1;
 
-        pqList = new ArrayList<>(); timeMap = new HashMap<>(); crMap = new HashMap<>();
+        cdList = new ArrayList<>(); timeMap = new HashMap<>(); crMap = new HashMap<>();
 
         for(int i = 1, clen = numClassRoom + 1, hr = init_hr; hr < fin_hr; hr++, i++) {
 
@@ -168,7 +159,7 @@ public class TimeTableActivity extends AppCompatActivity {
 
         }
 
-        for(int i = 0; i < numClassRoom; pqList.add(new PriorityQueue<Reservation>()), i++);
+        for(int i = 0; i < numClassRoom; cdList.add(new ArrayList<ClassRoomData>()), i++);
         for(int i = 1; i <= numClassRoom; crMap.put(getCellFromTable(0, i).getText().toString(), i++));
         for(int i = 1, hr = init_hr; hr < fin_hr; timeMap.put(parse_time_range_by_row_index(i)[0], i++), hr++);
 
@@ -188,17 +179,10 @@ public class TimeTableActivity extends AppCompatActivity {
                     crData.setEndTime(tmpRef.child("endTime").getValue(Long.class));
                     crData.setNumUsers(tmpRef.child("numUsers").getValue(Integer.class));
                     crData.setUsage(tmpRef.child("usage").getValue(String.class));
-                    pqList.get(crMap.get(crData.getClassRoom())).add(new Reservation(crData));
+                    cdList.get(crMap.get(crData.getClassRoom())).add(crData);
                 }
-
-                //TODO: L1:pqList // L2:PrimaryQueue<Reservation> to writeRsvnToTableCell(rsvn)
-
-                for(int i = 0, size = pqList.size(); i < size; i++) {
-                    while (!pqList.get(i).isEmpty()) {
-                        writeRsvnToTableCell(pqList.get(i).poll());
-                    }
-                }
-
+                writeRsvnToTable();
+                clearRsvnTable();
             }
 
             @Override
@@ -295,18 +279,29 @@ public class TimeTableActivity extends AppCompatActivity {
         return (TextView) ((TableRow)time_table.getChildAt(i)).getChildAt(j);
     }
 
-    private void writeRsvnToTableCell(Reservation rsvn) {
-        if(rsvn != null) {
-            int init_i = timeMap.get(rsvn.getStartHour());
-            int fin_i = timeMap.get(rsvn.getEndHour() - 1);
-            int j = crMap.get(rsvn.getClassRoom());
+    private void writeRsvnToTableCell(ClassRoomData crData) {
+        if(crData != null) {
+            int init_i = timeMap.get(crData.getStartTimeInHour());
+            int fin_i = timeMap.get(crData.getEndTimeInHour() - 1);
+            int j = crMap.get(crData.getClassRoom());
             TextView temp;
-            for (int i = init_i; i <= fin_i; i++) {
+            for(int i = init_i; i <= fin_i; i++) {
                 temp = getCellFromTable(i, j);
-                temp.setText(String.valueOf(rsvn.getUserId()));
+                temp.setText(String.valueOf(crData.getUserId()));
                 temp.setBackgroundResource(R.drawable.reserved_table_cell_background);
             }
         }
+    }
+    private void writeRsvnToTable() {
+        for(int i = 0, size_r = cdList.size(); i < size_r; i++) {
+            for(int j = 0, size_c = cdList.get(i).size(); j < size_c; j++) {
+                writeRsvnToTableCell(cdList.get(i).get(j));
+            }
+        }
+    }
+
+    private void clearRsvnTable() {
+        for(int i = 0; i < cdList.size(); cdList.get(i++).clear());
     }
 
     @Override
@@ -346,14 +341,10 @@ public class TimeTableActivity extends AppCompatActivity {
                                 crData.setEndTime(tmpRef.child("endTime").getValue(Long.class));
                                 crData.setNumUsers(tmpRef.child("numUsers").getValue(Integer.class));
                                 crData.setUsage(tmpRef.child("usage").getValue(String.class));
-                                pqList.get(crMap.get(crData.getClassRoom())).add(new Reservation(crData));
-                                //
+                                cdList.get(crMap.get(crData.getClassRoom())).add(crData);
                             }
-                            for(int i = 0, size = pqList.size(); i < size; i++) {
-                                while (!pqList.get(i).isEmpty()) {
-                                    writeRsvnToTableCell(pqList.get(i).poll());
-                                }
-                            }
+                            writeRsvnToTable();
+                            clearRsvnTable();
                         }
 
                         @Override
@@ -395,14 +386,10 @@ public class TimeTableActivity extends AppCompatActivity {
                                 crData.setEndTime(tmpRef.child("endTime").getValue(Long.class));
                                 crData.setNumUsers(tmpRef.child("numUsers").getValue(Integer.class));
                                 crData.setUsage(tmpRef.child("usage").getValue(String.class));
-                                pqList.get(crMap.get(crData.getClassRoom())).add(new Reservation(crData));
-                                //
+                                cdList.get(crMap.get(crData.getClassRoom())).add(crData);
                             }
-                            for(int i = 0, size = pqList.size(); i < size; i++) {
-                                while (!pqList.get(i).isEmpty()) {
-                                    writeRsvnToTableCell(pqList.get(i).poll());
-                                }
-                            }
+                            writeRsvnToTable();
+                            clearRsvnTable();
                         }
 
                         @Override
