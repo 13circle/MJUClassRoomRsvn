@@ -44,8 +44,8 @@ public class LogInActivity extends AppCompatActivity {
         backPressedTime = 0;
         isSignedIn = false;
 
-        login_id = findViewById(R.id.login_id);
-        login_pw = findViewById(R.id.login_pw);
+        login_id = findViewById(R.id.login_id); login_id.setText("60162162"); // TODO: Test ID. Must be removed later.
+        login_pw = findViewById(R.id.login_pw); login_pw.setText("Dodge4college!"); // TODO: Test PW. Must be removed later.
         btn_login_submit = findViewById(R.id.login_submit);
         btn_register = findViewById(R.id.register);
 
