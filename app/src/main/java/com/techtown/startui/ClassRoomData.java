@@ -1,25 +1,10 @@
 package com.techtown.startui;
 
 import android.content.Context;
-import android.provider.CalendarContract;
 import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.Date;
 
 /* SERIALIZABLE/BUNDLE CLASS
  *
@@ -128,22 +113,22 @@ public class ClassRoomData implements Serializable {
     /* 달력 관련 메소드 */
     public void setCalendar(Calendar calendar) { this.calendar = calendar; }    // 달력 객체 설정
     public Calendar getCalendar() { return calendar; }                          // 달력 객체 반환
-    public long getTimeByHour(int hr) {                                         // 달력 객체로 밀리초 단위 시간 설정
+    public long getTimeHourToMs(int hr) {                                         // 달력 객체로 밀리초 단위 시간 설정
         Calendar cal = (Calendar) this.calendar.clone();
         cal.set(Calendar.HOUR_OF_DAY, hr - 1);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         return cal.getTimeInMillis();
     }
-    public void setStartTimeByHour(int hr) { setStartTime(getTimeByHour(hr)); } // 달력 객체로 이용 시작 시간 설정
-    public void setEndTimeByHour(int hr) { setEndTime(getTimeByHour(hr)); }     // 달력 객체로 이용 종료 시간 설정
-    public int getTimeInHour(long ms) {                                         // 달력 객체로 밀리초 단위 시간을 시간으로 반환
+    public void setStartTimeHourToMs(int hr) { setStartTime(getTimeHourToMs(hr)); } // 달력 객체로 이용 시작 시간 설정
+    public void setEndTimeHourToMs(int hr) { setEndTime(getTimeHourToMs(hr)); }     // 달력 객체로 이용 종료 시간 설정
+    public int getTimeMsToHour(long ms) {                                         // 달력 객체로 밀리초 단위 시간을 시간으로 반환
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(ms);
         return cal.get(Calendar.HOUR_OF_DAY) + 1;
     }
-    public int getStartTimeInHour() { return getTimeInHour(this.startTime); }   // 달력 객체로 이용 시작 시간을 반환
-    public int getEndTimeInHour() { return getTimeInHour(this.endTime); }       // 달력 객체로 이용 종료 시간을 반환
+    public int getStartTimeMsToHour() { return getTimeMsToHour(this.startTime); }   // 달력 객체로 이용 시작 시간을 반환
+    public int getEndTimeMsToHour() { return getTimeMsToHour(this.endTime); }       // 달력 객체로 이용 종료 시간을 반환
     public int getYear() { return calendar.get(Calendar.YEAR); }                // 해당 연도 반환
     public int getMonth() { return calendar.get(Calendar.MONTH); }              // 해당 월 반환 (범위가 0 ~ 11 이므로 +1 한 값이 실제 월 값이다.)
     public int getDate() { return calendar.get(Calendar.DAY_OF_MONTH); }        // 해당 일 반환
