@@ -1,7 +1,19 @@
 package com.techtown.startui;
 
+import android.provider.ContactsContract;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 
 class FBnode {
 
@@ -10,16 +22,14 @@ class FBnode {
     byte color;
 
     /* Constructor */
-    public FBnode(ClassRoomData classRoomData) { this( classRoomData, null, null ); }
+    public FBnode(ClassRoomData classRoomData) { this( null, null, null ); }
 
     /* Constructor */
     public FBnode(ClassRoomData classRoomData, FBnode left, FBnode right) {
-
         this.left = left;
         this.right = right;
         this.classRoomData = classRoomData;
         color = 1;
-
     }
 
 }
@@ -34,14 +44,19 @@ public class MyFirebase {
     private static FBnode nullNode;
     private static final byte BLACK = 1;
     private static final byte RED   = 0;
+    private ClassRoomData classRoomData;
     private DatabaseReference mRef;
     private DatabaseReference userRef;
     private DatabaseReference userRsvnRef;
     private DatabaseReference calRef;
     private DatabaseReference rsvnRef;
+    private DataSnapshot calDS;
+    private DataSnapshot rsvnDS;
+    private ArrayList<ArrayList<ClassRoomData>> cdList;
+    private HashMap<String, Integer> crMap;
 
     static {
-        nullNode = new FBnode(new ClassRoomData());
+        nullNode = new FBnode(null);
         nullNode.left = nullNode;
         nullNode.right = nullNode;
     }
@@ -50,11 +65,12 @@ public class MyFirebase {
         this.header = new FBnode(classRoomData);
         this.header.left = nullNode;
         this.header.right = nullNode;
+        this.classRoomData = classRoomData;
         mRef = FirebaseDatabase.getInstance().getReference();
         calRef = mRef.child("calendar");
         userRef = mRef.child("users").child(String.valueOf(classRoomData.getUserId()));
         userRsvnRef = userRef.child("myResvList");
-        rsvnRef = mRef.child("reservation");
+        rsvnRef = mRef.child("reservations");
     }
 
     public boolean isEmpty() { return this.header.right == nullNode; }
@@ -68,7 +84,7 @@ public class MyFirebase {
             this.great = this.grand;
             this.grand = this.parent;
             this.parent = this.current;
-            this.current = (classRoomData.getStartTime() < current.classRoomData.getStartTime()) ? this.current.left : this.current.right;
+            this.current = (classRoomData.getStartTime() < this.current.classRoomData.getStartTime()) ? this.current.left : this.current.right;
             if(this.current.left.color == RED && this.current.right.color == RED)
                 handleReorient(classRoomData.getStartTime());
         }
@@ -143,7 +159,75 @@ public class MyFirebase {
         return calRef.child(r.classRoomData.getYear() + "_"
                 + (r.classRoomData.getMonth() + 1)).child(String.valueOf(r.classRoomData.getDate()));
     }
+    private DataSnapshot getDateDS(FBnode r, DataSnapshot dsRoot) {
+        setCalDS(dsRoot);
+        return calDS.child(r.classRoomData.getYear() + "_"
+                + (r.classRoomData.getMonth() + 1)).child(String.valueOf(r.classRoomData.getDate()));
+    }
+    // TODO: Must be replaced to FBnode version later
+    private DatabaseReference getDateRef(ClassRoomData classRoomData) {
+        return calRef.child(classRoomData.getYear() + "_"
+                + (classRoomData.getMonth() + 1)).child(String.valueOf(classRoomData.getDate()));
+    }
+    private DataSnapshot getDateDS(ClassRoomData classRoomData, DataSnapshot dsRoot) {
+        setCalDS(dsRoot);
+        return calDS.child(classRoomData.getYear() + "_"
+                + (classRoomData.getMonth() + 1)).child(String.valueOf(classRoomData.getDate()));
+    }
+    private DataSnapshot getDateDS(int yr, int mth, int date, DataSnapshot dsRoot) {
+        setCalDS(dsRoot);
+        return calDS.child(yr + "_" + mth).child(String.valueOf(date));
+    }
 
-    //
+    private DataSnapshot getUserSnapshot(DataSnapshot dsRoot, ClassRoomData classRoomData) {
+        return dsRoot.child("users").child(String.valueOf(classRoomData.getUserId()));
+    }
+    private DataSnapshot getUserRsvnSnapshot(DataSnapshot dsRoot, ClassRoomData classRoomData) {
+        return getUserSnapshot(dsRoot, classRoomData).child("myResvList");
+    }
+    private void setRsvnDS(DataSnapshot dsRoot) { rsvnDS = dsRoot.child("reservations"); }
+    private void setCalDS(DataSnapshot dsRoot) { calDS = dsRoot.child("calendar"); }
+
+    private void triggerRead() { mRef.child("trigger").setValue(true); }
+
+    // TODO: Read/Write functions version control [v1:Basic write to FB (has ClassRoomData as a param) / v2:Implementing RBT in FB (No param - search in FB)]
+    public void writeReservation(ClassRoomData classRoomData) {
+        String key = userRsvnRef.push().getKey();
+        userRsvnRef.child(key).setValue(true); getDateRef(classRoomData).child(key).setValue(true);
+        rsvnRef.child(key).child("userId").setValue(classRoomData.getUserId());
+        rsvnRef.child(key).child("userName").setValue(classRoomData.getUserName());
+        rsvnRef.child(key).child("phoneNumber").setValue(classRoomData.getPhoneNumber());
+        rsvnRef.child(key).child("classRoom").setValue(classRoomData.getClassRoom());
+        rsvnRef.child(key).child("startTime").setValue(classRoomData.getStartTime());
+        rsvnRef.child(key).child("endTime").setValue(classRoomData.getEndTime());
+        rsvnRef.child(key).child("numUsers").setValue(classRoomData.getNumUsers());
+        rsvnRef.child(key).child("usage").setValue(classRoomData.getUsage());
+    }
+    public long countReservationForCalendar(MyDateObj mdo, int date, DataSnapshot dsRoot) {
+        int yr = mdo.getCalendar().get(Calendar.YEAR);
+        int mth = mdo.getCalendar().get(Calendar.MONTH) + 1;
+        return getDateDS(yr, mth, date, dsRoot).getChildrenCount();
+    }
+    public void readReservationForTable(DataSnapshot dataSnapshot, ArrayList<ArrayList<ClassRoomData>> cdListParam, HashMap<String, Integer> crMapParam) {
+        triggerRead(); this.cdList = cdListParam; this.crMap = crMapParam;
+        setCalDS(dataSnapshot); setRsvnDS(dataSnapshot);
+        DataSnapshot dateRef = getDateDS(classRoomData, dataSnapshot);
+        for(DataSnapshot rsvnSnapshot : dateRef.getChildren()) {
+            DataSnapshot tmpRef = rsvnDS.child(rsvnSnapshot.getKey());
+            ClassRoomData crData = new ClassRoomData((Calendar) classRoomData.getCalendar().clone());
+            Log.e("Reserved ID", String.valueOf(tmpRef.child("userId").getValue(Integer.class)));
+            crData.setUserId(tmpRef.child("userId").getValue(Integer.class));
+            crData.setUserName(tmpRef.child("userName").getValue(String.class));
+            crData.setClassRoom(tmpRef.child("classRoom").getValue(String.class));
+            crData.setStartTime(tmpRef.child("startTime").getValue(Long.class));
+            crData.setEndTime(tmpRef.child("endTime").getValue(Long.class));
+            crData.setNumUsers(tmpRef.child("numUsers").getValue(Integer.class));
+            crData.setUsage(tmpRef.child("usage").getValue(String.class));
+            cdList.get(crMap.get(crData.getClassRoom())).add(crData);
+        }
+    }
+    public void readReservationForUser(ClassRoomData classRoomData) {
+        //
+    }
 
 }

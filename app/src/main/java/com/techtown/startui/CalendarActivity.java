@@ -33,6 +33,8 @@ public class CalendarActivity extends AppCompatActivity {
 
     DatabaseReference mRef;
 
+    MyFirebase fb;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +50,8 @@ public class CalendarActivity extends AppCompatActivity {
         calendar = Calendar.getInstance();
 
         mRef = FirebaseDatabase.getInstance().getReference();
+
+        fb = new MyFirebase(classRoomData);
 
         setBannerMthCurrent();
 
@@ -217,19 +221,11 @@ public class CalendarActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         TextView rsvn_tv = (TextView)ll.getChildAt(1);
-                        int yr = mdo.getCalendar().get(Calendar.YEAR);
-                        int mth = mdo.getCalendar().get(Calendar.MONTH) + 1;
-                        long cnt = dataSnapshot.child("calendar").child(yr + "_" + mth).child(String.valueOf(tDate)).getChildrenCount();
-                        if(cnt != 0) {
-                            rsvn_tv.setText("예약 " + cnt);
-                        } else {
-                            rsvn_tv.setText("");
-                        }
+                        long cnt = fb.countReservationForCalendar(mdo, tDate, dataSnapshot);
+                        rsvn_tv.setText((cnt != 0) ? "예약 " + cnt : "");
                     }
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        //
-                    }
+                    public void onCancelled(@NonNull DatabaseError databaseError) { }
                 });
 
             }

@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -23,7 +24,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 
 public class TimeTableActivity extends AppCompatActivity {
@@ -40,6 +40,8 @@ public class TimeTableActivity extends AppCompatActivity {
     ArrayList<ArrayList<ClassRoomData>> cdList;
     HashMap<String, Integer> crMap;
     HashMap<Integer, Integer> timeMap;
+
+    MyFirebase fb;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +80,8 @@ public class TimeTableActivity extends AppCompatActivity {
         calendarRef = mRef.child("calendar").child(yr_mth).child(date);
 
         mRef.child("trigger").setValue(true);
+
+        fb = new MyFirebase(classRoomData);
 
         numClassRoom = ((TableRow)time_table.getChildAt(0)).getChildCount() - 1;
 
@@ -166,29 +170,11 @@ public class TimeTableActivity extends AppCompatActivity {
         mRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DataSnapshot rsvnRef = dataSnapshot.child("reservations");
-                DataSnapshot calendarRef = dataSnapshot.child("calendar").child(classRoomData.getYear() + "_" + (classRoomData.getMonth() + 1))
-                        .child(String.valueOf(classRoomData.getDate()));
-                for(DataSnapshot rsvnSnapshot : calendarRef.getChildren()) {
-                    DataSnapshot tmpRef = rsvnRef.child(rsvnSnapshot.getKey());
-                    ClassRoomData crData = new ClassRoomData((Calendar) classRoomData.getCalendar().clone());
-                    crData.setUserId(tmpRef.child("userId").getValue(Integer.class));
-                    crData.setUserName(tmpRef.child("userName").getValue(String.class));
-                    crData.setClassRoom(tmpRef.child("classRoom").getValue(String.class));
-                    crData.setStartTime(tmpRef.child("startTime").getValue(Long.class));
-                    crData.setEndTime(tmpRef.child("endTime").getValue(Long.class));
-                    crData.setNumUsers(tmpRef.child("numUsers").getValue(Integer.class));
-                    crData.setUsage(tmpRef.child("usage").getValue(String.class));
-                    cdList.get(crMap.get(crData.getClassRoom())).add(crData);
-                }
-                writeRsvnToTable();
-                clearRsvnTable();
+                fb.readReservationForTable(dataSnapshot, cdList, crMap);
+                writeRsvnToTable(); clearRsvnTable();
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                //
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
 
         Button confirm_reserve = findViewById(R.id.confirm_reserve);
@@ -205,8 +191,8 @@ public class TimeTableActivity extends AppCompatActivity {
                 int startTime = parse_time_range_by_row_index(startTimeIndices[0])[0];
                 int endTime = parse_time_range_by_row_index(endTimeIndices[0])[1];
 
-                classRoomData.setStartTimeByHour(startTime);
-                classRoomData.setEndTimeByHour(endTime);
+                classRoomData.setStartTimeHourToMs(startTime);
+                classRoomData.setEndTimeHourToMs(endTime);
 
                 Intent intent = new Intent(getApplicationContext(), ReservationActivity.class);
                 Bundle bundle = new Bundle();
@@ -281,8 +267,8 @@ public class TimeTableActivity extends AppCompatActivity {
 
     private void writeRsvnToTableCell(ClassRoomData crData) {
         if(crData != null) {
-            int init_i = timeMap.get(crData.getStartTimeInHour());
-            int fin_i = timeMap.get(crData.getEndTimeInHour() - 1);
+            int init_i = timeMap.get(crData.getStartTimeMsToHour());
+            int fin_i = timeMap.get(crData.getEndTimeMsToHour() - 1);
             int j = crMap.get(crData.getClassRoom());
             TextView temp;
             for(int i = init_i; i <= fin_i; i++) {
@@ -312,47 +298,17 @@ public class TimeTableActivity extends AppCompatActivity {
                 case 3000:
                     classRoomData = (ClassRoomData)data.getSerializableExtra("classRoomData");
 
-                    DatabaseReference myResvList = mRef.child("users").child(String.valueOf(classRoomData.getUserId())).child("myResvList");
-                    DatabaseReference resvRef = mRef.child("reservations");
-                    String key = myResvList.push().getKey();
-                    myResvList.child(key).setValue(true); calendarRef.child(key).setValue(true);
-                    resvRef.child(key).child("userId").setValue(classRoomData.getUserId());
-                    resvRef.child(key).child("userName").setValue(classRoomData.getUserName());
-                    resvRef.child(key).child("phoneNumber").setValue(classRoomData.getPhoneNumber());
-                    resvRef.child(key).child("classRoom").setValue(classRoomData.getClassRoom());
-                    resvRef.child(key).child("startTime").setValue(classRoomData.getStartTime());
-                    resvRef.child(key).child("endTime").setValue(classRoomData.getEndTime());
-                    resvRef.child(key).child("numUsers").setValue(classRoomData.getNumUsers());
-                    resvRef.child(key).child("usage").setValue(classRoomData.getUsage());
+                    fb.writeReservation(classRoomData);
 
                     mRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            DataSnapshot rsvnRef = dataSnapshot.child("reservations");
-                            DataSnapshot calendarRef = dataSnapshot.child("calendar").child(classRoomData.getYear() + "_" + (classRoomData.getMonth() + 1))
-                                    .child(String.valueOf(classRoomData.getDate()));
-                            for(DataSnapshot rsvnSnapshot : calendarRef.getChildren()) {
-                                DataSnapshot tmpRef = rsvnRef.child(rsvnSnapshot.getKey());
-                                ClassRoomData crData = new ClassRoomData((Calendar) classRoomData.getCalendar().clone());
-                                crData.setUserId(tmpRef.child("userId").getValue(Integer.class));
-                                crData.setUserName(tmpRef.child("userName").getValue(String.class));
-                                crData.setClassRoom(tmpRef.child("classRoom").getValue(String.class));
-                                crData.setStartTime(tmpRef.child("startTime").getValue(Long.class));
-                                crData.setEndTime(tmpRef.child("endTime").getValue(Long.class));
-                                crData.setNumUsers(tmpRef.child("numUsers").getValue(Integer.class));
-                                crData.setUsage(tmpRef.child("usage").getValue(String.class));
-                                cdList.get(crMap.get(crData.getClassRoom())).add(crData);
-                            }
-                            writeRsvnToTable();
-                            clearRsvnTable();
+                            fb.readReservationForTable(dataSnapshot, cdList, crMap);
+                            writeRsvnToTable(); clearRsvnTable();
                         }
-
                         @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            //
-                        }
+                        public void onCancelled(@NonNull DatabaseError databaseError) { }
                     });
-
                     cancel_selection();
                     prev_i = prev_j = 0;
                     isAllSelected = false;
@@ -373,29 +329,11 @@ public class TimeTableActivity extends AppCompatActivity {
                     mRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            DataSnapshot rsvnRef = dataSnapshot.child("reservations");
-                            DataSnapshot calendarRef = dataSnapshot.child("calendar").child(classRoomData.getYear() + "_" + (classRoomData.getMonth() + 1))
-                                    .child(String.valueOf(classRoomData.getDate()));
-                            for(DataSnapshot rsvnSnapshot : calendarRef.getChildren()) {
-                                DataSnapshot tmpRef = rsvnRef.child(rsvnSnapshot.getKey());
-                                ClassRoomData crData = new ClassRoomData((Calendar) classRoomData.getCalendar().clone());
-                                crData.setUserId(tmpRef.child("userId").getValue(Integer.class));
-                                crData.setUserName(tmpRef.child("userName").getValue(String.class));
-                                crData.setClassRoom(tmpRef.child("classRoom").getValue(String.class));
-                                crData.setStartTime(tmpRef.child("startTime").getValue(Long.class));
-                                crData.setEndTime(tmpRef.child("endTime").getValue(Long.class));
-                                crData.setNumUsers(tmpRef.child("numUsers").getValue(Integer.class));
-                                crData.setUsage(tmpRef.child("usage").getValue(String.class));
-                                cdList.get(crMap.get(crData.getClassRoom())).add(crData);
-                            }
-                            writeRsvnToTable();
-                            clearRsvnTable();
+                            fb.readReservationForTable(dataSnapshot, cdList, crMap);
+                            writeRsvnToTable(); clearRsvnTable();
                         }
-
                         @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            //
-                        }
+                        public void onCancelled(@NonNull DatabaseError databaseError) { }
                     });
                     break;
             }
