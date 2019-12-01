@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,7 +15,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -108,7 +106,7 @@ public class MyPageActivity extends AppCompatActivity {
                     show_place.setText(classRoomData.getClassRoom());
                     show_personnel.setText(String.valueOf(classRoomData.getNumUsers()));
                     show_purpose.setText(classRoomData.getUsage());
-                    show_time.setText(classRoomData.getStartTimeInHour() + ":00~" + classRoomData.getEndTimeInHour() + ":00");
+                    show_time.setText(classRoomData.getStartTimeMsToHour() + ":00~" + classRoomData.getEndTimeMsToHour() + ":00");
 
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTimeInMillis(classRoomData.getStartTime());
@@ -173,7 +171,7 @@ public class MyPageActivity extends AppCompatActivity {
                                 show_place.setText(classRoomData.getClassRoom());
                                 show_personnel.setText(String.valueOf(classRoomData.getNumUsers()));
                                 show_purpose.setText(classRoomData.getUsage());
-                                show_time.setText(classRoomData.getStartTimeInHour() + ":00~" + classRoomData.getEndTimeInHour() + ":00");
+                                show_time.setText(classRoomData.getStartTimeMsToHour() + ":00~" + classRoomData.getEndTimeMsToHour() + ":00");
 
                                 Calendar calendar = Calendar.getInstance();
                                 calendar.setTimeInMillis(classRoomData.getStartTime());
