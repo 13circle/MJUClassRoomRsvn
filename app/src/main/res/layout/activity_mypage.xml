@@ -177,7 +177,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-
+<!---
             <TextView
                 android:id="@+id/reserveInfo"
                 android:layout_width="wrap_content"
@@ -327,7 +327,124 @@
                     android:layout_marginBottom="10dp"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
+-->
+            <TextView
+                android:id="@+id/my_rsvn_info_banner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="예약 현황"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="@id/favorite"
+                app:layout_constraintTop_toBottomOf="@id/favorite"
+                android:layout_marginTop="20dp"/>
+            <LinearLayout
+                android:id="@+id/my_rsvn_list"
+                android:layout_width="338dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="@id/favorite"
+                app:layout_constraintEnd_toEndOf="@id/favorite"
+                app:layout_constraintTop_toBottomOf="@id/my_rsvn_info_banner">
+<!--
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimaryDark"
+                    android:stretchColumns="1"
+                    android:layout_marginBottom="10dp"
+                    android:padding="15dp">
+                    <TableRow>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="장소"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="YXXXX"/>
+                        <Button
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:gravity="center"
+                            android:text="X"
+                            android:textColor="#000"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                            android:background="@drawable/button_selector_circle"/>
+                    </TableRow>
+                    <TableRow>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="날짜"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="XXXX/XX/XX"/>
+                    </TableRow>
+                    <TableRow>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="시간"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="XX:XX~XX:XX"/>
+                    </TableRow>
+                    <TableRow>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="인원"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="XX 명"/>
+                    </TableRow>
+                    <TableRow>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="이용목적"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="XX"/>
+                    </TableRow>
+                </TableLayout>
+-->
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
