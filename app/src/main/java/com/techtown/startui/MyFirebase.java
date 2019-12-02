@@ -2,6 +2,7 @@ package com.techtown.startui;
 
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -11,8 +12,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 class FBnode {
@@ -32,6 +37,16 @@ class FBnode {
         color = 1;
     }
 
+}
+
+class AscendingStartTime implements Comparator<ArrayList<String>> {
+    private static int DATE_i = 1;
+    private static int TIME_i = 2;
+    @Override
+    public int compare(ArrayList<String> a, ArrayList<String> b) {
+        int date_cmp = a.get(DATE_i).compareTo(b.get(DATE_i));
+        return (date_cmp != 0) ? date_cmp : a.get(TIME_i).compareTo(b.get(TIME_i));
+    }
 }
 
 public class MyFirebase {
@@ -188,7 +203,11 @@ public class MyFirebase {
     private void setRsvnDS(DataSnapshot dsRoot) { rsvnDS = dsRoot.child("reservations"); }
     private void setCalDS(DataSnapshot dsRoot) { calDS = dsRoot.child("calendar"); }
 
-    private void triggerRead() { mRef.child("trigger").setValue(true); }
+    private String pad0toHour(int hr) {
+        return (hr < 10) ? ("0" + hr) : String.valueOf(hr);
+    }
+
+    public void triggerRead() { mRef.child("trigger").setValue(true); }
 
     // TODO: Read/Write functions version control [v1:Basic write to FB (has ClassRoomData as a param) / v2:Implementing RBT in FB (No param - search in FB)]
     public void writeReservation(ClassRoomData classRoomData) {
@@ -203,13 +222,35 @@ public class MyFirebase {
         rsvnRef.child(key).child("numUsers").setValue(classRoomData.getNumUsers());
         rsvnRef.child(key).child("usage").setValue(classRoomData.getUsage());
     }
+    public void deleteReservation(DataSnapshot dataSnapshot, ClassRoomData classRoomData) {
+        setRsvnDS(dataSnapshot); setCalDS(dataSnapshot);
+        DataSnapshot rsvnUserDS = getUserRsvnSnapshot(dataSnapshot, classRoomData);
+        DataSnapshot dateDS = getDateDS(classRoomData, dataSnapshot);
+        Calendar cal = Calendar.getInstance();
+        for(DataSnapshot ds : rsvnUserDS.getChildren()) {
+            DataSnapshot startTimeDS = rsvnDS.child(ds.getKey()).child("startTime");
+            cal.setTimeInMillis(startTimeDS.getValue(Long.class));
+            if(cal.get(Calendar.YEAR) == classRoomData.getYear() &&
+                cal.get(Calendar.MONTH) == classRoomData.getMonth() &&
+                cal.get(Calendar.DAY_OF_MONTH) == classRoomData.getDate() &&
+                cal.get(Calendar.HOUR_OF_DAY) + 1 == classRoomData.getStartTimeMsToHour()) {
+
+                rsvnDS.child(ds.getKey()).getRef().removeValue();
+                dateDS.child(ds.getKey()).getRef().removeValue();
+                ds.getRef().removeValue();
+
+                Log.e("deleteReservation", "REMOVED");
+                break;
+            }
+        }
+    }
     public long countReservationForCalendar(MyDateObj mdo, int date, DataSnapshot dsRoot) {
         int yr = mdo.getCalendar().get(Calendar.YEAR);
         int mth = mdo.getCalendar().get(Calendar.MONTH) + 1;
         return getDateDS(yr, mth, date, dsRoot).getChildrenCount();
     }
     public void readReservationForTable(DataSnapshot dataSnapshot, ArrayList<ArrayList<ClassRoomData>> cdListParam, HashMap<String, Integer> crMapParam) {
-        triggerRead(); this.cdList = cdListParam; this.crMap = crMapParam;
+        this.cdList = cdListParam; this.crMap = crMapParam;
         setCalDS(dataSnapshot); setRsvnDS(dataSnapshot);
         DataSnapshot dateRef = getDateDS(classRoomData, dataSnapshot);
         for(DataSnapshot rsvnSnapshot : dateRef.getChildren()) {
@@ -226,8 +267,25 @@ public class MyFirebase {
             cdList.get(crMap.get(crData.getClassRoom())).add(crData);
         }
     }
-    public void readReservationForUser(ClassRoomData classRoomData) {
-        //
+    public ArrayList<ArrayList<String>> readReservationForUser(DataSnapshot dataSnapshot) {
+        DataSnapshot userRsvnDS = getUserRsvnSnapshot(dataSnapshot, this.classRoomData);
+        ArrayList<ArrayList<String>> rsvnList = new ArrayList<>(); setRsvnDS(dataSnapshot);
+        for(DataSnapshot ds : userRsvnDS.getChildren()) {
+            DataSnapshot currentRsvnDS = rsvnDS.child(ds.getKey());
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(currentRsvnDS.child("startTime").getValue(Long.class));
+            ClassRoomData crData = new ClassRoomData(cal);
+            crData.setStartTime(currentRsvnDS.child("startTime").getValue(Long.class));
+            crData.setEndTime(currentRsvnDS.child("endTime").getValue(Long.class));
+            rsvnList.add(new ArrayList<String>()); int i = rsvnList.size() - 1;
+            rsvnList.get(i).add(currentRsvnDS.child("classRoom").getValue(String.class));
+            rsvnList.get(i).add(crData.getYear() + "/" + pad0toHour(crData.getMonth() + 1) + "/" + pad0toHour(crData.getDate()));
+            rsvnList.get(i).add(pad0toHour(crData.getStartTimeMsToHour()) + ":00~" + pad0toHour(crData.getEndTimeMsToHour()) + ":00");
+            rsvnList.get(i).add(String.valueOf(currentRsvnDS.child("numUsers").getValue(Integer.class)));
+            rsvnList.get(i).add(currentRsvnDS.child("usage").getValue(String.class));
+        }
+        Collections.sort(rsvnList, new AscendingStartTime());
+        return rsvnList;
     }
 
 }

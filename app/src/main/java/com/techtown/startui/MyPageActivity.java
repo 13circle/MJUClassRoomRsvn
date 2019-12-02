@@ -3,10 +3,20 @@ package com.techtown.startui;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -15,9 +25,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 
 public class MyPageActivity extends AppCompatActivity {
@@ -25,6 +38,8 @@ public class MyPageActivity extends AppCompatActivity {
     ClassRoomData classRoomData;
 
     DatabaseReference mRef;
+
+    MyFirebase fb;
 
     TextView show_user_name, show_user_id, show_user_email, show_phone_number;
     TextView show_date, show_time, show_purpose, show_place, show_personnel;
@@ -47,155 +62,145 @@ public class MyPageActivity extends AppCompatActivity {
         show_user_id = findViewById(R.id.show_user_id);
         show_user_email = findViewById(R.id.show_user_email);
         show_phone_number = findViewById(R.id.show_phone_number);
-        show_date = findViewById(R.id.show_date);
-        show_time = findViewById(R.id.show_time);
-        show_purpose = findViewById(R.id.show_purpose);
-        show_place = findViewById(R.id.show_place);
-        show_personnel = findViewById(R.id.show_personnel);
-
-        cancel_button = findViewById(R.id.cancelButton);
 
         current_uid = ""; current_start_time = 0; isCancelled = false;
 
         Intent intent = getIntent();
         classRoomData = (ClassRoomData)intent.getSerializableExtra("classRoomData");
 
+        fb = new MyFirebase(classRoomData);
+
         mRef.child("trigger").setValue(true);
 
-        String msg = "예약 없음";
-        show_place.setText(msg);
-        show_personnel.setText(msg);
-        show_purpose.setText(msg);
-        show_time.setText(msg);
-        show_date.setText(msg);
+        show_user_name.setText(classRoomData.getUserName());
+        show_user_id.setText(String.valueOf(classRoomData.getUserId()));
+        show_user_email.setText(classRoomData.getUserEmail());
+        show_phone_number.setText(classRoomData.getPhoneNumber());
 
         mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                show_user_name.setText(classRoomData.getUserName());
-                show_user_id.setText(String.valueOf(classRoomData.getUserId()));
-                show_user_email.setText(classRoomData.getUserEmail());
-                show_phone_number.setText(classRoomData.getPhoneNumber());
-
-                DataSnapshot userRef = dataSnapshot.child("users").child(String.valueOf(classRoomData.getUserId()));
-                DataSnapshot myResvList = userRef.child("myResvList");
-                DataSnapshot rsvnRef = dataSnapshot.child("reservations");
-
-                HashMap<Long, String> keyMap = new HashMap<>();
-                ArrayList<Long> startTimeList = new ArrayList<>();
-                for(DataSnapshot ds : myResvList.getChildren()) {
-                    Long startTime = rsvnRef.child(ds.getKey()).child("startTime").getValue(Long.class);
-                    keyMap.put(startTime, ds.getKey());
-                    startTimeList.add(startTime);
-                }
-
-                if(!startTimeList.isEmpty()) {
-
-                    Collections.sort(startTimeList);
-
-                    current_uid = keyMap.get(startTimeList.get(startTimeList.size() - 1));
-                    DataSnapshot currentRsvnRef = rsvnRef.child(current_uid);
-
-                    current_start_time = currentRsvnRef.child("startTime").getValue(Long.class);
-                    classRoomData.setStartTime(current_start_time);
-                    classRoomData.setEndTime(currentRsvnRef.child("endTime").getValue(Long.class));
-                    classRoomData.setClassRoom(currentRsvnRef.child("classRoom").getValue(String.class));
-                    classRoomData.setNumUsers(currentRsvnRef.child("numUsers").getValue(Integer.class));
-                    classRoomData.setUsage(currentRsvnRef.child("usage").getValue(String.class));
-
-                    show_place.setText(classRoomData.getClassRoom());
-                    show_personnel.setText(String.valueOf(classRoomData.getNumUsers()));
-                    show_purpose.setText(classRoomData.getUsage());
-                    show_time.setText(classRoomData.getStartTimeMsToHour() + ":00~" + classRoomData.getEndTimeMsToHour() + ":00");
-
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTimeInMillis(classRoomData.getStartTime());
-                    show_date.setText(calendar.get(Calendar.YEAR) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DAY_OF_MONTH));
-                }
-            }
-
+                ArrayList<ArrayList<String>> rsvnList = fb.readReservationForUser(dataSnapshot);
+                for(int i = 0; i < rsvnList.size(); addReservationView(rsvnList.get(i++)));
+            } // onDataChange
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                //
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
 
-        cancel_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(!(current_uid.isEmpty() || current_start_time == 0)) {
-                    isCancelled = true;
+    }
 
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTimeInMillis(current_start_time);
-                    mRef.child("calendar").child(calendar.get(Calendar.YEAR) + "_" + (calendar.get(Calendar.MONTH) + 1))
-                            .child(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH))).child(current_uid).removeValue();
-                    mRef.child("reservations").child(current_uid).removeValue();
-                    mRef.child("users").child(String.valueOf(classRoomData.getUserId()))
-                            .child("myResvList").child(current_uid).removeValue();
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void addReservationView(ArrayList<String> rsvnInfo) {
+        LinearLayout rsvn_list = findViewById(R.id.my_rsvn_list);
 
-                    mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        TableLayout rsvn = new TableLayout(getApplicationContext());
+        rsvn.setColumnStretchable(1, true);
+        rsvn.setBackgroundResource(R.color.colorPrimaryDark);
+        int px_dp = convertDPtoPX(15);
+        rsvn.setPadding(px_dp, px_dp, px_dp, px_dp);
+        TableLayout.LayoutParams tlp = new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        tlp.setMargins(0, 0, 0, convertDPtoPX(10));
+        rsvn.setLayoutParams(tlp);
+
+        TableRow[] trArr = new TableRow[5];
+        for(int i = 0; i < 5; trArr[i++] = new TableRow(getApplicationContext()));
+        for(int i = 0; i < 5; i++) {
+            String txt1, txt2; txt1 = txt2 = "";
+            TextView tv1 = new TextView(getApplicationContext());
+            TextView tv2 = new TextView(getApplicationContext());
+            int defaultTxtClr = Color.rgb(255, 255, 255);
+            int defaultTxtAppr = R.style.TextAppearance_AppCompat_Medium;
+            tv1.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, convertDPtoPX(40))); tv1.setTextColor(defaultTxtClr);
+            tv1.setTextAppearance(defaultTxtAppr); tv1.setGravity(Gravity.CENTER); tv1.setTextColor(defaultTxtClr);
+            tv2.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, convertDPtoPX(40))); tv2.setTextColor(defaultTxtClr);
+            tv2.setTextAppearance(defaultTxtAppr); tv2.setGravity(Gravity.CENTER); tv2.setTextColor(defaultTxtClr);
+            trArr[i].addView(tv1); trArr[i].addView(tv2);
+            switch(i) {
+                case 0:
+                    txt1 = "장소"; txt2 = rsvnInfo.get(0);
+                    Button cancel_button = new Button(getApplicationContext());
+                    cancel_button.setLayoutParams(new TableRow.LayoutParams(convertDPtoPX(46), ViewGroup.LayoutParams.WRAP_CONTENT));
+                    cancel_button.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                    cancel_button.setBackgroundResource(R.drawable.button_selector_circle);
+                    cancel_button.setTextAppearance(R.style.TextAppearance_AppCompat_Large);
+                    cancel_button.setText("X"); cancel_button.setTextColor(Color.rgb(0, 0, 0));
+                    cancel_button.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            show_user_name.setText(classRoomData.getUserName());
-                            show_user_id.setText(String.valueOf(classRoomData.getUserId()));
-                            show_user_email.setText(classRoomData.getUserEmail());
-                            show_phone_number.setText(classRoomData.getPhoneNumber());
+                        public void onClick(View view) {
 
-                            DataSnapshot userRef = dataSnapshot.child("users").child(String.valueOf(classRoomData.getUserId()));
-                            DataSnapshot myResvList = userRef.child("myResvList");
-                            DataSnapshot rsvnRef = dataSnapshot.child("reservations");
+                            isCancelled = true;
 
-                            HashMap<Long, String> keyMap = new HashMap<>();
-                            ArrayList<Long> startTimeList = new ArrayList<>();
-                            for(DataSnapshot ds : myResvList.getChildren()) {
-                                Long startTime = rsvnRef.child(ds.getKey()).child("startTime").getValue(Long.class);
-                                keyMap.put(startTime, ds.getKey());
-                                startTimeList.add(startTime);
-                            }
+                            TableLayout tl = (TableLayout) ((ViewGroup) view.getParent()).getParent();
+                            String date_str = ((TextView)((TableRow)(tl.getChildAt(1))).getChildAt(1)).getText().toString();
+                            String time_str = ((TextView)((TableRow)(tl.getChildAt(2))).getChildAt(1)).getText().toString();
 
-                            if(!startTimeList.isEmpty()) {
+                            int[] dateArr = parseDateStrToInt(date_str);
+                            int[] timeArr = parseTimeStrToInt(time_str);
 
-                                Collections.sort(startTimeList);
+                            Calendar cal = Calendar.getInstance();
+                            cal.set(dateArr[0], (dateArr[1] - 1), dateArr[2]);
+                            cal.set(Calendar.HOUR_OF_DAY, timeArr[0] - 1); cal.set(Calendar.MINUTE, 0);
 
-                                current_uid = keyMap.get(startTimeList.get(startTimeList.size() - 1));
-                                DataSnapshot currentRsvnRef = rsvnRef.child(current_uid);
+                            classRoomData.setCalendar(cal);
+                            classRoomData.setStartTime(cal.getTimeInMillis());
 
-                                current_start_time = currentRsvnRef.child("startTime").getValue(Long.class);
-                                classRoomData.setStartTime(current_start_time);
-                                classRoomData.setEndTime(currentRsvnRef.child("endTime").getValue(Long.class));
-                                classRoomData.setClassRoom(currentRsvnRef.child("classRoom").getValue(String.class));
-                                classRoomData.setNumUsers(currentRsvnRef.child("numUsers").getValue(Integer.class));
-                                classRoomData.setUsage(currentRsvnRef.child("usage").getValue(String.class));
+                            fb.triggerRead();
 
-                                show_place.setText(classRoomData.getClassRoom());
-                                show_personnel.setText(String.valueOf(classRoomData.getNumUsers()));
-                                show_purpose.setText(classRoomData.getUsage());
-                                show_time.setText(classRoomData.getStartTimeMsToHour() + ":00~" + classRoomData.getEndTimeMsToHour() + ":00");
+                            mRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    fb.deleteReservation(dataSnapshot, classRoomData);
+                                }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) { }
+                            });
 
-                                Calendar calendar = Calendar.getInstance();
-                                calendar.setTimeInMillis(classRoomData.getStartTime());
-                                show_date.setText(calendar.get(Calendar.YEAR) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.DAY_OF_MONTH));
-                            } else {
-                                String msg = "예약 없음";
-                                show_place.setText(msg);
-                                show_personnel.setText(msg);
-                                show_purpose.setText(msg);
-                                show_time.setText(msg);
-                                show_date.setText(msg);
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            //
+                            ((LinearLayout)findViewById(R.id.my_rsvn_list)).removeView(tl);
                         }
                     });
-                }
+                    trArr[0].addView(cancel_button);
+                    break;
+                case 1:
+                    txt1 = "날짜"; txt2 = rsvnInfo.get(1);
+                    break;
+                case 2:
+                    txt1 = "시간"; txt2 = rsvnInfo.get(2);
+                    break;
+                case 3:
+                    txt1 = "인원"; txt2 = rsvnInfo.get(3);
+                    break;
+                case 4:
+                    txt1 = "이용목적"; txt2 = rsvnInfo.get(4);
+                    break;
+            } // switch
+            tv1.setText(txt1); tv2.setText(txt2);
+        } // for
+        for(int i = 0; i < 5; rsvn.addView(trArr[i++]));
+        rsvn_list.addView(rsvn);
+    }
 
-            }
-        });
+    private int convertDPtoPX(int dp_value) {
+        float scale = getApplicationContext().getResources().getDisplayMetrics().density;
+        return (int)(dp_value * scale + 0.5f);
+    }
 
+    private int[] parseDateStrToInt(String date_str) {
+        // XXXX/XX/XX >> XXXX, XX, XX
+        String[] strs = date_str.split("/");
+        int[] dates = new int[3];
+        for(int i = 0; i < strs.length; dates[i] = Integer.valueOf(strs[i++]));
+        return dates;
+    }
+
+    private int[] parseTimeStrToInt(String time_str) {
+        // XX:00~XX:00 >> XX, XX
+        String[] strs = time_str.split(":00~");
+        int[] times = new int[2];
+        strs[1] = strs[1].substring(0, strs[1].lastIndexOf(":"));
+        for(int i = 0; i < strs.length; times[i] = Integer.valueOf(strs[i++]));
+        Log.i("parseTimeStrToInt", times[0] + ":" + times[1]);
+        return times;
     }
 
     @Override
