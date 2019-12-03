@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context=".reserve">
+    tools:context=".ReservationActivity">
 
     <TableLayout
         android:id="@+id/reservation_form"
@@ -34,7 +34,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <EditText
-                android:id="@+id/editText4"
+                android:id="@+id/users_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="8"
@@ -85,7 +85,7 @@
                 android:layout_marginStart="10dp"
                 android:popupBackground="@android:color/darker_gray"
                 app:layout_constraintTop_toTopOf="@id/textView9"
-                app:layout_constraintEnd_toEndOf="@id/editText4"></Spinner>
+                app:layout_constraintEnd_toEndOf="@id/users_num"></Spinner>
 
         </TableRow>
 
@@ -99,6 +99,7 @@
             android:layout_marginEnd="20dp">
 
             <Button
+                android:id="@+id/rsvn_confirm_btn"
                 android:layout_span="3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -111,4 +112,4 @@
     </TableLayout>
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

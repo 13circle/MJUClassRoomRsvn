@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "310830718096",
+    "firebase_url": "https://mjuclassrm.firebaseio.com",
+    "project_id": "mjuclassrm",
+    "storage_bucket": "mjuclassrm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:310830718096:android:f876bd7bcc613f460b0c15",
+        "android_client_info": {
+          "package_name": "com.techtown.startui"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "310830718096-cmr7pohc8or2op70djp7rk7tmoulljq0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjRsa0CFCTTbhyJ8-OIhm05vI6_vHeS2A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "310830718096-cmr7pohc8or2op70djp7rk7tmoulljq0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

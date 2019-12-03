@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context=".searchActivity"
     android:background="#FFFFFF">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="명지대학교 강의실 대여 시스템"
+        android:text="강의실 검색"
         android:textSize="25sp"
         android:padding="15dp"
         android:textColor="#fff"
@@ -36,7 +38,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="ID"
+                android:text="시작 시간"
                 android:textColor="#fff"
                 android:textSize="24sp" />
 
@@ -45,7 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:cursorVisible="true"
-                android:ems="10"
+                android:ems="1"
                 android:inputType="numberDecimal"
                 android:textColor="#fff" />
         </TableRow>
@@ -60,7 +62,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="PW"
+                android:text="종료 시간"
                 android:textColor="#fff"
                 android:textSize="24sp" />
 
@@ -68,7 +70,7 @@
                 android:id="@+id/login_pw"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:ems="10"
+                android:ems="5"
                 android:inputType="textPassword"
                 android:textColor="#fff" />
         </TableRow>
@@ -84,24 +86,8 @@
                 android:layout_marginTop="15dp"
                 android:layout_span="2"
                 android:background="@drawable/button_selector_white"
-                android:text="LOGIN"
+                android:text="검색"
                 android:textColor="#000" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Button
-                android:id="@+id/register"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_span="2"
-                android:background="@drawable/button_selector_sub2"
-                android:text="회원가입"
-                android:textColor="#fff" />
 
         </TableRow>
 

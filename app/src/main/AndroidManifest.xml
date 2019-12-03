@@ -9,8 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".reserve"></activity>
-        <activity android:name=".mypage" />
+        <activity android:name=".searchActivity"></activity>
+        <activity android:name=".EmailVerificationActivity" />
+        <activity android:name=".ReservationActivity" />
+        <activity android:name=".MyPageActivity" />
         <activity android:name=".TimeTableActivity" />
         <activity android:name=".CalendarActivity" />
         <activity android:name=".LogInActivity" />
@@ -21,6 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MembershipActivity" />
     </application>
 
 </manifest>

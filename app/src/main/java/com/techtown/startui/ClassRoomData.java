@@ -1,5 +1,8 @@
 package com.techtown.startui;
 
+import android.content.Context;
+import android.widget.Toast;
+
 import java.io.Serializable;
 import java.util.Calendar;
 
@@ -44,14 +47,14 @@ public class ClassRoomData implements Serializable {
 
     private Calendar calendar;   // 날짜 정보 전달을 위한 Java 기본 달력 객체
 
-    private String userName;    // 사용자 이름
-    private String phoneNumber; // 사용자 전화번호
-    private String userEmail;   // 사용자 이메일
+    private String userName;     // 사용자 이름
+    private String phoneNumber;  // 사용자 전화번호
+    private String userEmail;    // 사용자 이메일
     private String classRoom;    // 예약 강의실 번호
+    private int numUsers;        // 강의실 사용 인원
     private long startTime;      // 이용 시작 시간
     private long endTime;        // 이용 종료 시간
     private String usage;        // 대여 사유
-
 
     /* 생성자 */
     public ClassRoomData() {                                                    // 기본 생성자
@@ -65,6 +68,7 @@ public class ClassRoomData implements Serializable {
         this.userEmail = "";
 
         this.classRoom = "";
+        this.numUsers = 0;
         this.startTime = 0;
         this.endTime = 0;
         this.usage = "";
@@ -74,7 +78,10 @@ public class ClassRoomData implements Serializable {
         this.userId = userId;
         this.userPw = userPw;
     }
-    public ClassRoomData(Calendar calendar) { this.calendar = calendar; }       // 달력 객체 초기화 생성자
+    public ClassRoomData(Calendar calendar) {                              // 달력 객체 초기화 생성자
+        this();
+        this.calendar = calendar;
+    }
 
 
     /* 사용자 계정 관련 메소드 */
@@ -87,6 +94,8 @@ public class ClassRoomData implements Serializable {
     /* 예약 정보 관련 메소드 */
     public String getClassRoom() { return classRoom; }                          // 예약 강의실 번호 반환
     public void setClassRoom(String classRoom) { this.classRoom = classRoom; }  // 예약 강의실 번호 설정
+    public int getNumUsers() { return numUsers; }                               // 강의실 이용 인원 반환
+    public void setNumUsers(int numUsers) { this.numUsers = numUsers; }         // 강의실 이용 인원 설정
     public long getStartTime() { return startTime; }                            // 이용 시작 시간 반환
     public void setStartTime(long startTime) { this.startTime = startTime; }    // 이용 시작 시간 설정
     public long getEndTime() { return endTime; }                                // 이용 종료 시간 반환
@@ -104,6 +113,22 @@ public class ClassRoomData implements Serializable {
     /* 달력 관련 메소드 */
     public void setCalendar(Calendar calendar) { this.calendar = calendar; }    // 달력 객체 설정
     public Calendar getCalendar() { return calendar; }                          // 달력 객체 반환
+    public long getTimeHourToMs(int hr) {                                         // 달력 객체로 밀리초 단위 시간 설정
+        Calendar cal = (Calendar) this.calendar.clone();
+        cal.set(Calendar.HOUR_OF_DAY, hr - 1);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        return cal.getTimeInMillis();
+    }
+    public void setStartTimeHourToMs(int hr) { setStartTime(getTimeHourToMs(hr)); } // 달력 객체로 이용 시작 시간 설정
+    public void setEndTimeHourToMs(int hr) { setEndTime(getTimeHourToMs(hr)); }     // 달력 객체로 이용 종료 시간 설정
+    public int getTimeMsToHour(long ms) {                                         // 달력 객체로 밀리초 단위 시간을 시간으로 반환
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(ms);
+        return cal.get(Calendar.HOUR_OF_DAY) + 1;
+    }
+    public int getStartTimeMsToHour() { return getTimeMsToHour(this.startTime); }   // 달력 객체로 이용 시작 시간을 반환
+    public int getEndTimeMsToHour() { return getTimeMsToHour(this.endTime); }       // 달력 객체로 이용 종료 시간을 반환
     public int getYear() { return calendar.get(Calendar.YEAR); }                // 해당 연도 반환
     public int getMonth() { return calendar.get(Calendar.MONTH); }              // 해당 월 반환 (범위가 0 ~ 11 이므로 +1 한 값이 실제 월 값이다.)
     public int getDate() { return calendar.get(Calendar.DAY_OF_MONTH); }        // 해당 일 반환
@@ -117,6 +142,23 @@ public class ClassRoomData implements Serializable {
             case 7: wkDayStr = "토"; break;
         }
         return wkDayStr;
+    }
+
+
+    /* 디버깅 관련 메소드 */
+    public void showAllAttributes(Context context) {                            // 모든 속성들에 대한 값을 Toast 메시지로 출력
+        String msg = "";
+        msg += "userId = " + this.userId + "\n";
+        msg += "userPw = " + this.userPw + "\n";
+        msg += "userEmail = " + this.userEmail + "\n";
+        msg += "userName = " + this.userName + "\n";
+        msg += "phoneNumber = " + this.phoneNumber + "\n";
+        msg += "classRoom = " + this.classRoom + "\n";
+        msg += "numUsers = " + this.numUsers + "\n";
+        msg += "startTime = " + this.startTime + "\n";
+        msg += "endTime = " + this.endTime + "\n";
+        msg += "usage = " + this.usage;
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 
 }

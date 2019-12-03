@@ -1,172 +1,452 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    tools:context=".mypage">
+    tools:context=".MyPageActivity">
 
-    <TextView
-        android:id="@+id/myInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="내 정보"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="@android:color/black"
-        app:layout_constraintStart_toStartOf="@+id/imageView3"
-        app:layout_constraintBottom_toTopOf="@+id/imageView3"/>
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/imageView3"
-        android:layout_width="338dp"
-        android:layout_height="203dp"
-        android:background="@color/colorPrimaryDark"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.479"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.186">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="이름"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/white"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="20dp"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/sNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="학번"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/white"
-            app:layout_constraintStart_toStartOf="@id/name"
-            app:layout_constraintTop_toBottomOf="@id/name"
-            android:layout_marginTop="20dp" />
+            <TextView
+                android:id="@+id/myInfo"
+                android:layout_width="338dp"
+                android:layout_height="wrap_content"
+                android:text="내 정보"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="@android:color/black"
+                android:layout_marginTop="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/imageView3"
+                android:layout_width="338dp"
+                android:layout_height="203dp"
+                android:background="@color/colorPrimaryDark"
+                app:layout_constraintStart_toStartOf="@id/myInfo"
+                app:layout_constraintTop_toBottomOf="@id/myInfo"
+                app:layout_constraintHorizontal_bias="0.479"
+                app:layout_constraintVertical_bias="0.186">
 
-        <TextView
-            android:id="@+id/major"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="학과"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/white"
-            app:layout_constraintStart_toStartOf="@id/sNumber"
-            app:layout_constraintTop_toBottomOf="@id/sNumber"
-            android:layout_marginTop="20dp"/>
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="이름"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="20dp"/>
 
-        <TextView
-            android:id="@+id/pNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="전화번호"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/white"
-            app:layout_constraintStart_toStartOf="@id/major"
-            app:layout_constraintTop_toBottomOf="@id/major"
-            android:layout_marginTop="20dp"/>
+                <TextView
+                    android:id="@+id/show_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:layout_constraintTop_toTopOf="@+id/name"
+                    app:layout_constraintStart_toEndOf="@+id/pNumber"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp"
+                    android:text="XXX"/>
 
-    </android.support.constraint.ConstraintLayout>
+                <TextView
+                    android:id="@+id/sNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="학번"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintStart_toStartOf="@id/name"
+                    app:layout_constraintTop_toBottomOf="@id/name"
+                    android:layout_marginTop="20dp" />
 
-    <TextView
-        android:id="@+id/reserveInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="강의실 대여 정보"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="@android:color/black"
-        app:layout_constraintStart_toStartOf="@+id/imageView4"
-        app:layout_constraintBottom_toTopOf="@+id/imageView4"/>
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/imageView4"
-        android:layout_width="338dp"
-        android:layout_height="203dp"
-        android:background="@color/colorPrimaryDark"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.479"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.813">
+                <TextView
+                    android:id="@+id/show_user_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:layout_constraintTop_toTopOf="@+id/sNumber"
+                    app:layout_constraintStart_toEndOf="@+id/pNumber"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp"
+                    android:text="XXXXXXXX"/>
 
-        <TextView
-            android:id="@+id/date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="날짜"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/white"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="30dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="20dp" />
+                <TextView
+                    android:id="@+id/email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="이메일"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintStart_toStartOf="@id/sNumber"
+                    app:layout_constraintTop_toBottomOf="@id/sNumber"
+                    android:layout_marginTop="20dp"/>
 
-        <TextView
-            android:id="@+id/time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="시간"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/white"
-            app:layout_constraintStart_toStartOf="@id/date"
-            app:layout_constraintTop_toBottomOf="@id/date"
-            android:layout_marginTop="20dp"/>
+                <TextView
+                    android:id="@+id/show_user_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:layout_constraintTop_toTopOf="@+id/email"
+                    app:layout_constraintStart_toEndOf="@+id/pNumber"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp"
+                    android:text="XXXXXXXXX@XXXX.XXX"/>
 
-        <TextView
-            android:id="@+id/purpose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="이용목적"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/white"
-            app:layout_constraintStart_toStartOf="@id/time"
-            app:layout_constraintTop_toBottomOf="@id/time"
-            android:layout_marginTop="20dp"/>
+                <TextView
+                    android:id="@+id/pNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="전화번호"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintStart_toStartOf="@id/email"
+                    app:layout_constraintTop_toBottomOf="@id/email"
+                    android:layout_marginTop="20dp"/>
 
-        <TextView
-            android:id="@+id/place"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="장소"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/white"
-            app:layout_constraintRight_toRightOf="@+id/cancelButton"
-            app:layout_constraintTop_toTopOf="@id/date"/>
+                <TextView
+                    android:id="@+id/show_phone_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:layout_constraintTop_toTopOf="@+id/pNumber"
+                    app:layout_constraintStart_toEndOf="@+id/pNumber"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp"
+                    android:text="010-XXXX-XXXX"/>
 
-        <TextView
-            android:id="@+id/personnel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="인원"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/white"
-            app:layout_constraintStart_toStartOf="@id/place"
-            app:layout_constraintTop_toTopOf="@id/time"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <Button
-            android:id="@+id/cancelButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/button_selector_white"
-            android:text="취소"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/purpose"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"/>
+            <TextView
+                android:id="@+id/bookmark"
+                android:layout_width="338dp"
+                android:layout_height="wrap_content"
+                android:text="즐겨찾기"
+                android:layout_gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintStart_toStartOf="@id/imageView3"
+                app:layout_constraintTop_toBottomOf="@id/imageView3"
+                android:layout_marginTop="20dp"
+                android:textColor="@android:color/black" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/favorite"
+                android:layout_width="338dp"
+                android:layout_height="124dp"
+                android:layout_gravity="center"
+                android:background="@color/colorPrimaryDark"
+                app:layout_constraintStart_toStartOf="@id/bookmark"
+                app:layout_constraintTop_toBottomOf="@id/bookmark"
+                app:layout_constraintHorizontal_bias="0.479"
+                app:layout_constraintVertical_bias="0.186">
 
-    </android.support.constraint.ConstraintLayout>
+                <Button
+                    android:id="@+id/button1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:text="Y5441"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-</android.support.constraint.ConstraintLayout>
+                <Button
+                    android:id="@+id/button2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="136dp"
+                    android:layout_marginLeft="136dp"
+                    android:text="즐겨찾는 강의실이 없습니다."
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+<!---
+            <TextView
+                android:id="@+id/reserveInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="강의실 대여 정보"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="@android:color/black"
+                android:layout_marginTop="20dp"
+                app:layout_constraintStart_toStartOf="@+id/imageView4"
+                app:layout_constraintBottom_toTopOf="@+id/imageView4"
+                app:layout_constraintTop_toBottomOf="@id/favorite"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/imageView4"
+                android:layout_width="338dp"
+                android:layout_height="203dp"
+                android:background="@color/colorPrimaryDark"
+                app:layout_constraintHorizontal_bias="0.479"
+                app:layout_constraintStart_toStartOf="@id/imageView3"
+                app:layout_constraintTop_toBottomOf="@id/reserveInfo"
+                app:layout_constraintVertical_bias="0.813">
+
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="날짜"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginTop="20dp" />
+
+                <TextView
+                    android:id="@+id/show_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:layout_constraintTop_toTopOf="@+id/date"
+                    app:layout_constraintEnd_toStartOf="@+id/place"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:text="XXXX/XX/XX" />
+
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="시간"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintStart_toStartOf="@id/date"
+                    app:layout_constraintTop_toBottomOf="@id/date"
+                    android:layout_marginTop="20dp"/>
+
+                <TextView
+                    android:id="@+id/show_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:layout_constraintTop_toTopOf="@+id/time"
+                    app:layout_constraintEnd_toStartOf="@+id/place"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:text="XX:XX~XX:XX" />
+
+                <TextView
+                    android:id="@+id/purpose"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="이용목적"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintStart_toStartOf="@id/time"
+                    app:layout_constraintTop_toBottomOf="@id/time"
+                    android:layout_marginTop="20dp"/>
+
+                <TextView
+                    android:id="@+id/show_purpose"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:layout_constraintTop_toTopOf="@+id/purpose"
+                    app:layout_constraintStart_toStartOf="@+id/cancelButton"
+                    android:text="XX" />
+
+                <TextView
+                    android:id="@+id/place"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="장소"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintLeft_toRightOf="@+id/cancelButton"
+                    app:layout_constraintTop_toTopOf="@id/date"/>
+
+                <TextView
+                    android:id="@+id/show_place"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintLeft_toRightOf="@id/place"
+                    app:layout_constraintTop_toTopOf="@id/place"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:text="YXXXX"/>
+
+                <TextView
+                    android:id="@+id/personnel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="인원"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintStart_toStartOf="@id/place"
+                    app:layout_constraintTop_toTopOf="@id/time"/>
+
+                <TextView
+                    android:id="@+id/show_personnel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintLeft_toRightOf="@id/place"
+                    app:layout_constraintTop_toTopOf="@id/personnel"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:text="XX"/>
+
+                <Button
+                    android:id="@+id/cancelButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_selector_white"
+                    android:text="취소"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:textColor="@android:color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/purpose"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+-->
+            <TextView
+                android:id="@+id/my_rsvn_info_banner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="예약 현황"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="@id/favorite"
+                app:layout_constraintTop_toBottomOf="@id/favorite"
+                android:layout_marginTop="20dp"/>
+            <LinearLayout
+                android:id="@+id/my_rsvn_list"
+                android:layout_width="338dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintStart_toStartOf="@id/favorite"
+                app:layout_constraintEnd_toEndOf="@id/favorite"
+                app:layout_constraintTop_toBottomOf="@id/my_rsvn_info_banner">
+<!--
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimaryDark"
+                    android:stretchColumns="1"
+                    android:layout_marginBottom="10dp"
+                    android:padding="15dp">
+                    <TableRow>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="장소"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="YXXXX"/>
+                        <Button
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:gravity="center"
+                            android:text="X"
+                            android:textColor="#000"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                            android:background="@drawable/button_selector_circle"/>
+                    </TableRow>
+                    <TableRow>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="날짜"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="XXXX/XX/XX"/>
+                    </TableRow>
+                    <TableRow>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="시간"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="XX:XX~XX:XX"/>
+                    </TableRow>
+                    <TableRow>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="인원"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="XX 명"/>
+                    </TableRow>
+                    <TableRow>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="이용목적"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="#fff"
+                            android:gravity="center"
+                            android:text="XX"/>
+                    </TableRow>
+                </TableLayout>
+-->
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
