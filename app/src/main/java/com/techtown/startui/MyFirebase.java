@@ -59,6 +59,14 @@ public class MyFirebase {
     private static FBnode nullNode;
     private static final byte BLACK = 1;
     private static final byte RED   = 0;
+    /*
+    private DataSnapshot current;
+    private DataSnapshot parent;
+    private DataSnapshot grand;
+    private DataSnapshot great;
+    private DataSnapshot header;
+    private DataSnapshot nilNode;
+     */
     private ClassRoomData classRoomData;
     private DatabaseReference mRef;
     private DatabaseReference userRef;
