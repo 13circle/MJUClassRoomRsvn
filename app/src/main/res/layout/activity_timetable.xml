@@ -34,40 +34,39 @@
                 android:layout_height="wrap_content"
                 android:stretchColumns="*">
 
-                <TableRow>
+                <TableRow android:id="@+id/header_btn_list">
 
                     <Button
-                        android:id="@+id/button126"
                         android:background="@drawable/table_header_cell_background"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="강의실 검색" />
 
-                    <TextView
+                    <Button
                         android:gravity="center"
                         android:background="@drawable/table_header_cell_background"
                         android:text="Y5401"/>
-                    <TextView
+                    <Button
                         android:gravity="center"
                         android:background="@drawable/table_header_cell_background"
                         android:text="Y5407"/>
-                    <TextView
+                    <Button
                         android:gravity="center"
                         android:background="@drawable/table_header_cell_background"
                         android:text="Y5411"/>
-                    <TextView
+                    <Button
                         android:gravity="center"
                         android:background="@drawable/table_header_cell_background"
                         android:text="Y5420"/>
-                    <TextView
+                    <Button
                         android:gravity="center"
                         android:background="@drawable/table_header_cell_background"
                         android:text="Y5437"/>
-                    <TextView
+                    <Button
                         android:gravity="center"
                         android:background="@drawable/table_header_cell_background"
                         android:text="Y5441"/>
-                    <TextView
+                    <Button
                         android:gravity="center"
                         android:background="@drawable/table_header_cell_background"
                         android:text="Y5445"/>

@@ -144,40 +144,7 @@
                 app:layout_constraintTop_toBottomOf="@id/imageView3"
                 android:layout_marginTop="20dp"
                 android:textColor="@android:color/black" />
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/favorite"
-                android:layout_width="338dp"
-                android:layout_height="124dp"
-                android:layout_gravity="center"
-                android:background="@color/colorPrimaryDark"
-                app:layout_constraintStart_toStartOf="@id/bookmark"
-                app:layout_constraintTop_toBottomOf="@id/bookmark"
-                app:layout_constraintHorizontal_bias="0.479"
-                app:layout_constraintVertical_bias="0.186">
-
-                <Button
-                    android:id="@+id/button1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:text="Y5441"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <Button
-                    android:id="@+id/button2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="136dp"
-                    android:layout_marginLeft="136dp"
-                    android:text="즐겨찾는 강의실이 없습니다."
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-<!---
+            <!---
             <TextView
                 android:id="@+id/reserveInfo"
                 android:layout_width="wrap_content"
@@ -328,6 +295,51 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/favorite"
+                android:layout_width="338dp"
+                android:layout_height="124dp"
+                android:background="@color/colorPrimaryDark"
+                app:layout_constraintStart_toStartOf="@id/bookmark"
+                app:layout_constraintTop_toBottomOf="@id/bookmark">
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <LinearLayout
+                            android:id="@+id/favorite_list"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:orientation="horizontal">
+                            <!--
+                            <Button
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="15dp"
+                                android:layout_marginRight="15dp"
+                                android:background="@drawable/button_selector_white"
+                                android:text="YXXXX"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                                android:textColor="#000" />
+                            -->
+                        </LinearLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </HorizontalScrollView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <TextView
                 android:id="@+id/my_rsvn_info_banner"
                 android:layout_width="wrap_content"

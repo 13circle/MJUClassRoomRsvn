@@ -226,6 +226,9 @@ public class MyFirebase {
     private DataSnapshot getUserRsvnSnapshot(DataSnapshot dsRoot, ClassRoomData classRoomData) {
         return getUserSnapshot(dsRoot, classRoomData).child("myResvList");
     }
+    private DataSnapshot getFavClassRoomDS(DataSnapshot dsRoot, ClassRoomData classRoomData) {
+        return getUserSnapshot(dsRoot, classRoomData).child("myFavList");
+    }
     private void setRsvnDS(DataSnapshot dsRoot) { rsvnDS = dsRoot.child("reservations"); }
     private void setCalDS(DataSnapshot dsRoot) { calDS = dsRoot.child("calendar"); }
     private void setRootUID(DataSnapshot dsRoot) { rootUID = dsRoot.child("RBTreeHeader").getValue(String.class); }
@@ -322,6 +325,23 @@ public class MyFirebase {
         }
         Collections.sort(rsvnList, new AscendingStartTime());
         return rsvnList;
+    }
+    public void writeFavoriteClassRoom(String favCR) {
+        if(favCR != null) {
+            userRef.child("myFavList").child(favCR).setValue(true);
+        }
+    }
+    public ArrayList<String> readFavoriteClassRoom(DataSnapshot dataSnapshot) {
+        DataSnapshot favDS = getFavClassRoomDS(dataSnapshot, this.classRoomData);
+        ArrayList<String> favList = new ArrayList<>();
+        for(DataSnapshot ds : favDS.getChildren())
+            favList.add(ds.getKey());
+        return favList;
+    }
+    public void deleteFavoriteClassRoom(String favCR) {
+        if(favCR != null) {
+            userRef.child("myFavList").child(favCR).removeValue();
+        }
     }
 
 }

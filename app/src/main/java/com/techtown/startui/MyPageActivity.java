@@ -42,9 +42,6 @@ public class MyPageActivity extends AppCompatActivity {
     MyFirebase fb;
 
     TextView show_user_name, show_user_id, show_user_email, show_phone_number;
-    TextView show_date, show_time, show_purpose, show_place, show_personnel;
-
-    Button cancel_button;
 
     String current_uid;
     long current_start_time;
@@ -77,10 +74,14 @@ public class MyPageActivity extends AppCompatActivity {
 
         fb = new MyFirebase(classRoomData);
 
+        fb.writeFavoriteClassRoom(intent.getStringExtra("favorite"));
+
         mRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<String> favList = fb.readFavoriteClassRoom(dataSnapshot);
+                for(int i = 0; i < favList.size(); addFavoriteClassRoomBtn(favList.get(i++)));
                 ArrayList<ArrayList<String>> rsvnList = fb.readReservationForUser(dataSnapshot);
                 for(int i = 0; i < rsvnList.size(); addReservationView(rsvnList.get(i++)));
             } // onDataChange
@@ -88,6 +89,28 @@ public class MyPageActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) { }
         });
 
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void addFavoriteClassRoomBtn(String favCR) {
+        LinearLayout favList = findViewById(R.id.favorite_list);
+        Button fav = new Button(this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(convertDPtoPX(15), 0, convertDPtoPX(15), 0);
+        fav.setLayoutParams(lp);
+        fav.setBackgroundResource(R.drawable.button_selector_white);
+        fav.setTextAppearance(R.style.TextAppearance_AppCompat_Medium);
+        fav.setTextColor(Color.rgb(0, 0, 0));
+        fav.setText(favCR);
+        fav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fb.deleteFavoriteClassRoom(((Button)view).getText().toString());
+                LinearLayout favList = findViewById(R.id.favorite_list);
+                favList.removeView(view);
+            }
+        });
+        favList.addView(fav);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)

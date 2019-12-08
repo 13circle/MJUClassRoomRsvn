@@ -49,22 +49,34 @@ public class TimeTableActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timetable);
 
-        Button button126=findViewById(R.id.button126);
-        button126.setOnClickListener(
-                new Button.OnClickListener(){
-                    public void onClick(View view){
-                        Intent intent=new Intent(getApplicationContext(), searchActivity.class);
-                        startActivity(intent);
-                    }
-                }
-        );
-
         TextView time_table_banner = findViewById(R.id.time_table_banner);
         time_table = findViewById(R.id.time_table);
         selectedCells = new ArrayList<>();
 
         Intent intent = getIntent();
         classRoomData = (ClassRoomData)intent.getSerializableExtra("classRoomData");
+
+        final TableRow headerList = findViewById(R.id.header_btn_list);
+        ((Button)headerList.getChildAt(0)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getApplicationContext(), searchActivity.class);
+                startActivity(intent);
+            }
+        });
+        for(int i = 1; i < headerList.getChildCount(); i++) {
+            headerList.getChildAt(i).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getApplicationContext(), MyPageActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("classRoomData", classRoomData);
+                    intent.putExtras(bundle);
+                    intent.putExtra("favorite", ((Button)view).getText().toString());
+                    startActivity(intent);
+                }
+            });
+        }
 
         time_table_banner.setText(classRoomData.getYear() + "년 " + (classRoomData.getMonth() + 1) + "월 " + classRoomData.getDate() + "일");
 
