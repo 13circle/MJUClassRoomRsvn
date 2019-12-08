@@ -68,14 +68,14 @@ public class MyPageActivity extends AppCompatActivity {
         Intent intent = getIntent();
         classRoomData = (ClassRoomData)intent.getSerializableExtra("classRoomData");
 
-        fb = new MyFirebase(classRoomData);
-
         mRef.child("trigger").setValue(true);
 
         show_user_name.setText(classRoomData.getUserName());
         show_user_id.setText(String.valueOf(classRoomData.getUserId()));
         show_user_email.setText(classRoomData.getUserEmail());
         show_phone_number.setText(classRoomData.getPhoneNumber());
+
+        fb = new MyFirebase(classRoomData);
 
         mRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -145,7 +145,7 @@ public class MyPageActivity extends AppCompatActivity {
                             classRoomData.setCalendar(cal);
                             classRoomData.setStartTime(cal.getTimeInMillis());
 
-                            fb.triggerRead();
+                            mRef.child("trigger").setValue(true);
 
                             mRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override

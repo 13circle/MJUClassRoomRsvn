@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,25 +20,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-
-class FBnode {
-
-    FBnode left, right;
-    ClassRoomData classRoomData;
-    byte color;
-
-    /* Constructor */
-    public FBnode(ClassRoomData classRoomData) { this( null, null, null ); }
-
-    /* Constructor */
-    public FBnode(ClassRoomData classRoomData, FBnode left, FBnode right) {
-        this.left = left;
-        this.right = right;
-        this.classRoomData = classRoomData;
-        color = 1;
-    }
-
-}
+import java.util.UUID;
+import java.util.logging.Level;
 
 class AscendingStartTime implements Comparator<ArrayList<String>> {
     private static int DATE_i = 1;
@@ -51,22 +35,11 @@ class AscendingStartTime implements Comparator<ArrayList<String>> {
 
 public class MyFirebase {
 
-    private FBnode current;
-    private FBnode parent;
-    private FBnode grand;
-    private FBnode great;
-    private FBnode header;
-    private static FBnode nullNode;
-    private static final byte BLACK = 1;
-    private static final byte RED   = 0;
-    /*
-    private DataSnapshot current;
-    private DataSnapshot parent;
-    private DataSnapshot grand;
-    private DataSnapshot great;
-    private DataSnapshot header;
-    private DataSnapshot nilNode;
-     */
+    private static final int BLACK = 1;
+    private static final int RED   = 0;
+
+    private String rootUID;
+
     private ClassRoomData classRoomData;
     private DatabaseReference mRef;
     private DatabaseReference userRef;
@@ -75,19 +48,11 @@ public class MyFirebase {
     private DatabaseReference rsvnRef;
     private DataSnapshot calDS;
     private DataSnapshot rsvnDS;
+
     private ArrayList<ArrayList<ClassRoomData>> cdList;
     private HashMap<String, Integer> crMap;
 
-    static {
-        nullNode = new FBnode(null);
-        nullNode.left = nullNode;
-        nullNode.right = nullNode;
-    }
-
     public MyFirebase(ClassRoomData classRoomData) {
-        this.header = new FBnode(classRoomData);
-        this.header.left = nullNode;
-        this.header.right = nullNode;
         this.classRoomData = classRoomData;
         mRef = FirebaseDatabase.getInstance().getReference();
         calRef = mRef.child("calendar");
@@ -96,98 +61,152 @@ public class MyFirebase {
         rsvnRef = mRef.child("reservations");
     }
 
-    public boolean isEmpty() { return this.header.right == nullNode; }
+    private boolean isEmpty(DataSnapshot dsRoot) {
+        return dsRoot.hasChild("RBTreeHeader");
+    }
 
-    public void makeEmpty() { this.header.right = nullNode; }
+    private DataSnapshot findNode(DataSnapshot dsRoot, DataSnapshot fNode, DataSnapshot node) {
+        if(isEmpty(dsRoot)) return null; setRsvnDS(dsRoot);
+        if(fNode.child("startTime").getValue(Long.class) < node.child("startTime").getValue(Long.class)) {
+            if(node.child("leftNode").getValue(String.class).equals("nullNode"))
+                return findNode(dsRoot, fNode, rsvnDS.child(node.child("leftNode").getValue(String.class)));
+        } else if(fNode.child("startTime").getValue(Long.class) > node.child("startTime").getValue(Long.class)) {
+            if(node.child("rightNode").getValue(String.class).equals("nullNode"))
+                return findNode(dsRoot, fNode, rsvnDS.child(node.child("rightNode").getValue(String.class)));
+        } else if(fNode.child("startTime").getValue(Long.class) > node.child("startTime").getValue(Long.class))
+            return node;
+        return null;
+    }
 
-    public void insert(ClassRoomData classRoomData) {
-        this.current = this.parent = this.grand = this.header;
-        nullNode.classRoomData = classRoomData;
-        while(!current.classRoomData.getClassRoom().equals(classRoomData.getClassRoom())) {
-            this.great = this.grand;
-            this.grand = this.parent;
-            this.parent = this.current;
-            this.current = (classRoomData.getStartTime() < this.current.classRoomData.getStartTime()) ? this.current.left : this.current.right;
-            if(this.current.left.color == RED && this.current.right.color == RED)
-                handleReorient(classRoomData.getStartTime());
+    public void insert(DataSnapshot dsRoot, String uidKey, ClassRoomData classRoomData) {
+        setRsvnDS(dsRoot);
+        long currentStartTime = classRoomData.getStartTime();
+        if(!isEmpty(dsRoot)) {
+            mRef.child("RBTreeHeader").setValue(uidKey);
+            dsRoot.child("RBTreeHeader").getRef().setValue(uidKey);
+        } else {
+            setRootUID(dsRoot);
+            DataSnapshot temp = rsvnDS.child(dsRoot.child("RBTreeHeader").getValue(String.class));
+            rsvnRef.child(uidKey).child("rbColor").setValue(RED);
+            while(true) {
+                if(currentStartTime < getStartTime(temp)) {
+                    if(getLeftNode(temp).getKey().equals("nullNode")) {
+                        temp.child("leftNode").getRef().setValue(uidKey);
+                        getNode(uidKey).child("parentNode").getRef().setValue(temp.getKey());
+                        break;
+                    } else temp = getLeftNode(temp);
+                } else if(currentStartTime >= getStartTime(temp)) {
+                    if(getRightNode(temp).getKey().equals("nullNode")) {
+                        temp.child("rightNode").getRef().setValue(uidKey);
+                        getNode(uidKey).child("parentNode").getRef().setValue(temp.getKey());
+                        break;
+                    } else temp = getRightNode(temp);
+                }
+            } // while
+            fixTree(dsRoot, uidKey);
+        } // if - isEmpty
+    }
+
+    private void fixTree(DataSnapshot dsRoot, String uidKey) {
+        while(getColor(getParentNode(uidKey)) == RED) {
+            DataSnapshot uncle;
+            if(isNodeEquals(getParentNode(uidKey), getLeftNode(getParentNode(getParentNode(uidKey))))) {
+                uncle = getRightNode(getParentNode(getParentNode(uidKey)));
+                if(!isNodeEquals(uncle, getNode("nullNode")) && getColor(uncle) == RED) {
+                    getParentNode(uidKey).child("rbColor").getRef().setValue(BLACK);
+                    uncle.child("rbColor").getRef().setValue(BLACK);
+                    getParentNode(getParentNode(uidKey)).child("rbColor").getRef().setValue(RED);
+                    uidKey = getParentNode(getParentNode(uidKey)).getKey();
+                    continue;
+                }
+                if(isNodeEquals(getNode(uidKey), getRightNode(getParentNode(uidKey)))) {
+                    uidKey = getParentNode(uidKey).getKey();
+                    rotateLeft(getNode(uidKey));
+                }
+                getParentNode(uidKey).child("rbColor").getRef().setValue(BLACK);
+                getParentNode(getParentNode(uidKey)).child("rbColor").getRef().setValue(RED);
+                rotateRight(getParentNode(getParentNode(uidKey)));
+            } else {
+                uncle = getLeftNode(getParentNode(getParentNode(uidKey)));
+                if(!isNodeEquals(uncle, getNode("nullNode")) && getColor(uncle) == RED) {
+                    getParentNode(uidKey).child("rbColor").getRef().setValue(BLACK);
+                    uncle.child("rbColor").getRef().setValue(BLACK);
+                    getParentNode(getParentNode(uidKey)).child("rbColor").getRef().setValue(RED);
+                    uidKey = getParentNode(getParentNode(uidKey)).getKey();
+                    continue;
+                }
+                if(isNodeEquals(getNode(uidKey), getLeftNode(getParentNode(uidKey)))) {
+                    uidKey = getParentNode(uidKey).getKey();
+                    rotateRight(getNode(uidKey));
+                }
+                getParentNode(uidKey).child("rbColor").getRef().setValue(BLACK);
+                getParentNode(getParentNode(uidKey)).child("rbColor").getRef().setValue(RED);
+                rotateLeft(getParentNode(getParentNode(uidKey)));
+            }
         }
-        if(this.current != nullNode) return;
-        this.current = new FBnode(classRoomData, nullNode, nullNode);
-        if(classRoomData.getStartTime() < this.parent.classRoomData.getStartTime())
-            this.parent.left = this.current;
-        else
-            this.parent.right = this.current;
-        handleReorient(classRoomData.getStartTime());
+        rsvnRef.child(dsRoot.child("RBTreeHeader").getValue(String.class)).child("rbColor").setValue(BLACK);
     }
 
-    private void handleReorient(long startTime) {
-        this.current.color = RED;
-        this.current.left.color = this.current.right.color = BLACK;
-        if(this.parent.color == RED) {
-            this.grand.color = RED;
-            if(startTime < this.grand.classRoomData.getStartTime() != startTime < this.parent.classRoomData.getStartTime())
-                this.parent = rotate(startTime, this.grand);
-            this.current = rotate(startTime, this.great);
-            this.current.color = BLACK;
+    private void rotateLeft(DataSnapshot node) {
+        if(!isNodeEquals(getParentNode(node), getNode("nullNode"))) {
+            if(isNodeEquals(node, getLeftNode(getParentNode(node))))
+                getParentNode(node).child("leftNode").getRef().setValue(getRightNode(node).getKey());
+            else
+                getParentNode(node).child("rightNode").getRef().setValue(getRightNode(node).getKey());
+            getRightNode(node).child("parentNode").getRef().setValue(getParentNode(node).getKey());
+            node.child("parentNode").getRef().setValue(getRightNode(node));
+            if(!isNodeEquals(getLeftNode(getRightNode(node)), getNode("nullNode")))
+                getLeftNode(getRightNode(node)).child("parentNode").getRef().setValue(node.getKey());
+            node.child("rightNode").getRef().setValue(getLeftNode(getRightNode(node)).getKey());
+            getParentNode(node).child("leftNode").getRef().setValue(node.getKey());
+        } else {
+            DataSnapshot right = getRightNode(rootUID);
+            getNode(rootUID).child("rightNode").getRef().setValue(getLeftNode(right));
+            getLeftNode(right).child("parentNode").getRef().setValue(rootUID);
+            getNode(rootUID).child("parentNode").getRef().setValue(right.getKey());
+            right.child("leftNode").getRef().setValue(rootUID);
+            right.child("parentNode").getRef().setValue("nullNode");
+            rootUID = right.getKey();
         }
-        this.header.right.color = BLACK;
     }
 
-    private FBnode rotate(long startTime, FBnode parent) {
-        if(startTime < parent.classRoomData.getStartTime())
-            return parent.left = startTime < parent.left.classRoomData.getStartTime() ? rotateWithLeftChild(parent.left) : rotateWithRightChild(parent.left);
-        else
-            return parent.right = startTime < parent.right.classRoomData.getStartTime() ? rotateWithLeftChild(parent.right) : rotateWithRightChild(parent.right);
-    }
-
-    private FBnode rotateWithLeftChild(FBnode k2) {
-        FBnode k1 = k2.left;
-        k2.left = k1.right;
-        k1.right = k2;
-        return k1;
-    }
-
-    private FBnode rotateWithRightChild(FBnode k1) {
-        FBnode k2 = k1.right;
-        k1.right = k2.left;
-        k2.left = k1;
-        return k2;
-    }
-
-    public int countNodes() { return countNodes(this.header.right); }
-
-    private int countNodes(FBnode r) {
-        if(r == nullNode) return 0;
-        int l = 1;
-        l += countNodes(r.left);
-        l += countNodes(r.right);
-        return l;
-    }
-
-    public boolean search(long startTime) { return search(header.right, startTime); }
-
-    private boolean search(FBnode r, long startTime) {
-        boolean found = false;
-        while ((r != nullNode) && !found) {
-            long rStartTime = r.classRoomData.getStartTime();
-            if (startTime < rStartTime) r = r.left;
-            else if (startTime > rStartTime) r = r.right;
-            else { found = true; break; }
-            found = search(r, startTime);
+    private void rotateRight(DataSnapshot node) {
+        if(!isNodeEquals(getParentNode(node), getNode("nullNode"))) {
+            if(isNodeEquals(node, getLeftNode(getParentNode(node))))
+                getParentNode(node).child("leftNode").getRef().setValue(getLeftNode(node).getKey());
+            else
+                getParentNode(node).child("rightNode").getRef().setValue(getLeftNode(node).getKey());
+            getLeftNode(node).child("rightNode").getRef().setValue(getParentNode(node).getKey());
+            node.child("parentNode").getRef().setValue(getLeftNode(node).getKey());
+            if(!isNodeEquals(getRightNode(getLeftNode(node)), getNode("nullNode")))
+                getRightNode(getLeftNode(node)).child("parentNode").getRef().setValue(node.getKey());
+            node.child("leftNode").getRef().setValue(getRightNode(getLeftNode(node)).getKey());
+            getParentNode(node).child("rightNode").getRef().setValue(node.getKey());
+        } else {
+            DataSnapshot left = getLeftNode(rootUID);
+            getNode(rootUID).child("leftNode").getRef().setValue(getRightNode(getLeftNode(rootUID)));
+            getRightNode(left).child("parentNode").getRef().setValue(rootUID);
+            getNode(rootUID).child("parentNode").getRef().setValue(left.getKey());
+            left.child("rightNode").getRef().setValue(rootUID);
+            left.child("parentNode").getRef().setValue("nullNode");
+            rootUID = left.getKey();
         }
-        return found;
     }
 
-    private DatabaseReference getDateRef(FBnode r) {
-        return calRef.child(r.classRoomData.getYear() + "_"
-                + (r.classRoomData.getMonth() + 1)).child(String.valueOf(r.classRoomData.getDate()));
-    }
-    private DataSnapshot getDateDS(FBnode r, DataSnapshot dsRoot) {
-        setCalDS(dsRoot);
-        return calDS.child(r.classRoomData.getYear() + "_"
-                + (r.classRoomData.getMonth() + 1)).child(String.valueOf(r.classRoomData.getDate()));
-    }
-    // TODO: Must be replaced to FBnode version later
+    //private void transplant(DataSnapshot target, DataSnapshot with) {
+
+    private boolean isNodeEquals(DataSnapshot a, DataSnapshot b) { return a.getKey().equals(b.getKey()); }
+    private DataSnapshot getNode(String uidKey) { return rsvnDS.child(uidKey); }
+    private DataSnapshot getParentNode(DataSnapshot n) { return rsvnDS.child(n.child("parentNode").getValue(String.class)); }
+    private DataSnapshot getParentNode(String uidKey) { return getParentNode(getNode(uidKey)); }
+    private DataSnapshot getLeftNode(DataSnapshot n) { return rsvnDS.child(n.child("leftNode").getValue(String.class)); }
+    private DataSnapshot getLeftNode(String uidKey) { return getLeftNode(getNode(uidKey)); }
+    private DataSnapshot getRightNode(DataSnapshot n) { return rsvnDS.child(n.child("rightNode").getValue(String.class)); }
+    private DataSnapshot getRightNode(String uidKey) { return getRightNode(getNode(uidKey)); }
+    private long getStartTime(DataSnapshot n) { return n.child("startTime").getValue(Long.class); }
+    private long getStartTime(String uidKey) { return getStartTime(getNode(uidKey)); }
+    private int getColor(DataSnapshot n) { return n.child("rbColor").getValue(Integer.class); }
+    private int getColor(String uidKey) { return getColor(getNode(uidKey)); }
     private DatabaseReference getDateRef(ClassRoomData classRoomData) {
         return calRef.child(classRoomData.getYear() + "_"
                 + (classRoomData.getMonth() + 1)).child(String.valueOf(classRoomData.getDate()));
@@ -201,7 +220,6 @@ public class MyFirebase {
         setCalDS(dsRoot);
         return calDS.child(yr + "_" + mth).child(String.valueOf(date));
     }
-
     private DataSnapshot getUserSnapshot(DataSnapshot dsRoot, ClassRoomData classRoomData) {
         return dsRoot.child("users").child(String.valueOf(classRoomData.getUserId()));
     }
@@ -210,28 +228,37 @@ public class MyFirebase {
     }
     private void setRsvnDS(DataSnapshot dsRoot) { rsvnDS = dsRoot.child("reservations"); }
     private void setCalDS(DataSnapshot dsRoot) { calDS = dsRoot.child("calendar"); }
-
+    private void setRootUID(DataSnapshot dsRoot) { rootUID = dsRoot.child("RBTreeHeader").getValue(String.class); }
     private String pad0toHour(int hr) {
         return (hr < 10) ? ("0" + hr) : String.valueOf(hr);
     }
+    private String getUIDkey() { return UUID.randomUUID().toString(); }
+    private HashMap<String, Object> getNewReservationObject(String uidKey, ClassRoomData classRoomData) {
+        HashMap<String, Object> rsvnPush = new HashMap<>();
+        HashMap<String, Object> rsvnInfo = new HashMap<>();
+        rsvnInfo.put("userId", classRoomData.getUserId());
+        rsvnInfo.put("userName", classRoomData.getUserName());
+        rsvnInfo.put("phoneNumber", classRoomData.getPhoneNumber());
+        rsvnInfo.put("classRoom", classRoomData.getClassRoom());
+        rsvnInfo.put("startTime", classRoomData.getStartTime());
+        rsvnInfo.put("endTime", classRoomData.getEndTime());
+        rsvnInfo.put("numUsers", classRoomData.getNumUsers());
+        rsvnInfo.put("usage", classRoomData.getUsage());
+        rsvnInfo.put("rbColor", 1);
+        rsvnInfo.put("leftNode", "nullNode");
+        rsvnInfo.put("rightNode", "nullNode");
+        rsvnInfo.put("parentNode", "nullNode");
+        rsvnPush.put(uidKey, rsvnInfo);
+        return rsvnPush;
+    }
 
-    public void triggerRead() { mRef.child("trigger").setValue(true); }
-
-    // TODO: Read/Write functions version control [v1:Basic write to FB (has ClassRoomData as a param) / v2:Implementing RBT in FB (No param - search in FB)]
-    public void writeReservation(ClassRoomData classRoomData) {
-        String key = userRsvnRef.push().getKey();
+    public String writeReservation(ClassRoomData classRoomData) {
+        String key = getUIDkey();
         userRsvnRef.child(key).setValue(true); getDateRef(classRoomData).child(key).setValue(true);
-        rsvnRef.child(key).child("userId").setValue(classRoomData.getUserId());
-        rsvnRef.child(key).child("userName").setValue(classRoomData.getUserName());
-        rsvnRef.child(key).child("phoneNumber").setValue(classRoomData.getPhoneNumber());
-        rsvnRef.child(key).child("classRoom").setValue(classRoomData.getClassRoom());
-        rsvnRef.child(key).child("startTime").setValue(classRoomData.getStartTime());
-        rsvnRef.child(key).child("endTime").setValue(classRoomData.getEndTime());
-        rsvnRef.child(key).child("numUsers").setValue(classRoomData.getNumUsers());
-        rsvnRef.child(key).child("usage").setValue(classRoomData.getUsage());
+        rsvnRef.updateChildren(getNewReservationObject(key, classRoomData));
+        return key;
     }
     public void deleteReservation(DataSnapshot dataSnapshot, ClassRoomData classRoomData) {
-        setRsvnDS(dataSnapshot); setCalDS(dataSnapshot);
         DataSnapshot rsvnUserDS = getUserRsvnSnapshot(dataSnapshot, classRoomData);
         DataSnapshot dateDS = getDateDS(classRoomData, dataSnapshot);
         Calendar cal = Calendar.getInstance();
@@ -243,11 +270,13 @@ public class MyFirebase {
                 cal.get(Calendar.DAY_OF_MONTH) == classRoomData.getDate() &&
                 cal.get(Calendar.HOUR_OF_DAY) + 1 == classRoomData.getStartTimeMsToHour()) {
 
+                if(rsvnUserDS.getChildrenCount() <= 1)
+                    mRef.child("RBTreeHeader").removeValue();
+
                 rsvnDS.child(ds.getKey()).getRef().removeValue();
                 dateDS.child(ds.getKey()).getRef().removeValue();
                 ds.getRef().removeValue();
 
-                Log.e("deleteReservation", "REMOVED");
                 break;
             }
         }
@@ -259,12 +288,11 @@ public class MyFirebase {
     }
     public void readReservationForTable(DataSnapshot dataSnapshot, ArrayList<ArrayList<ClassRoomData>> cdListParam, HashMap<String, Integer> crMapParam) {
         this.cdList = cdListParam; this.crMap = crMapParam;
-        setCalDS(dataSnapshot); setRsvnDS(dataSnapshot);
+        setRsvnDS(dataSnapshot); setCalDS(dataSnapshot);
         DataSnapshot dateRef = getDateDS(classRoomData, dataSnapshot);
         for(DataSnapshot rsvnSnapshot : dateRef.getChildren()) {
             DataSnapshot tmpRef = rsvnDS.child(rsvnSnapshot.getKey());
             ClassRoomData crData = new ClassRoomData((Calendar) classRoomData.getCalendar().clone());
-            Log.e("Reserved ID", String.valueOf(tmpRef.child("userId").getValue(Integer.class)));
             crData.setUserId(tmpRef.child("userId").getValue(Integer.class));
             crData.setUserName(tmpRef.child("userName").getValue(String.class));
             crData.setClassRoom(tmpRef.child("classRoom").getValue(String.class));

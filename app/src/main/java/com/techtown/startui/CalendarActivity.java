@@ -51,8 +51,6 @@ public class CalendarActivity extends AppCompatActivity {
 
         mRef = FirebaseDatabase.getInstance().getReference();
 
-        fb = new MyFirebase(classRoomData);
-
         setBannerMthCurrent();
 
         for(int i = 2, li = calendar_view.getChildCount(); i < li; i++) {
@@ -215,7 +213,9 @@ public class CalendarActivity extends AppCompatActivity {
 
                 tv.setText(String.valueOf(dCnt));
 
-                mRef.child("trigger").setValue(true);
+                fb = new MyFirebase(classRoomData);
+
+                mRef.child("trigger").setValue(Math.random());
 
                 mRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override

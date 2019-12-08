@@ -42,6 +42,7 @@ public class TimeTableActivity extends AppCompatActivity {
     HashMap<Integer, Integer> timeMap;
 
     MyFirebase fb;
+    String key;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,8 +81,6 @@ public class TimeTableActivity extends AppCompatActivity {
         calendarRef = mRef.child("calendar").child(yr_mth).child(date);
 
         mRef.child("trigger").setValue(true);
-
-        fb = new MyFirebase(classRoomData);
 
         numClassRoom = ((TableRow)time_table.getChildAt(0)).getChildCount() - 1;
 
@@ -166,6 +165,8 @@ public class TimeTableActivity extends AppCompatActivity {
         for(int i = 0; i < numClassRoom; cdList.add(new ArrayList<ClassRoomData>()), i++);
         for(int i = 1; i <= numClassRoom; crMap.put(getCellFromTable(0, i).getText().toString(), i++));
         for(int i = 1, hr = init_hr; hr < fin_hr; timeMap.put(parse_time_range_by_row_index(i)[0], i++), hr++);
+
+        fb = new MyFirebase(classRoomData);
 
         mRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -298,20 +299,22 @@ public class TimeTableActivity extends AppCompatActivity {
                 case 3000:
                     classRoomData = (ClassRoomData)data.getSerializableExtra("classRoomData");
 
-                    fb.writeReservation(classRoomData);
+                    key = fb.writeReservation(classRoomData);
 
                     mRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            fb.insert(dataSnapshot, key, classRoomData);
                             fb.readReservationForTable(dataSnapshot, cdList, crMap);
                             writeRsvnToTable(); clearRsvnTable();
                         }
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) { }
                     });
-                    cancel_selection();
-                    prev_i = prev_j = 0;
-                    isAllSelected = false;
+
+                    mRef.child("trigger").setValue(Math.random());
+
+                    cancel_selection(); prev_i = prev_j = 0; isAllSelected = false;
                     findViewById(R.id.to_reservation).setVisibility(View.INVISIBLE);
 
                     break;
