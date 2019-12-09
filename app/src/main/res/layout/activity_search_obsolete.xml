@@ -28,6 +28,44 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
+        <TableRow>
+            <EditText
+                android:id="@+id/search_month"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="numberDecimal"
+                android:gravity="center"
+                android:layout_span="1"
+                android:ems="5"
+                android:textColor="#fff"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="월"
+                android:textColor="#fff"
+                android:layout_span="1"
+                android:textSize="24sp"/>
+
+            <EditText
+                android:id="@+id/search_date"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_span="1"
+                android:ems="5"
+                android:gravity="center"
+                android:inputType="numberDecimal"
+                android:textColor="#fff" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="일"
+                android:textColor="#fff"
+                android:layout_span="1"
+                android:textSize="24sp"/>
+        </TableRow>
+
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -40,6 +78,7 @@
                 android:padding="10dp"
                 android:text="시작 시간"
                 android:textColor="#fff"
+                android:layout_span="2"
                 android:textSize="24sp" />
 
             <EditText
@@ -47,7 +86,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:cursorVisible="true"
+                android:layout_span="2"
                 android:ems="5"
+                android:gravity="center"
                 android:inputType="numberDecimal"
                 android:textColor="#fff" />
         </TableRow>
@@ -64,13 +105,16 @@
                 android:padding="10dp"
                 android:text="종료 시간"
                 android:textColor="#fff"
+                android:layout_span="2"
                 android:textSize="24sp" />
 
             <EditText
                 android:id="@+id/search_end_hour"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_span="2"
                 android:ems="5"
+                android:gravity="center"
                 android:inputType="numberDecimal"
                 android:textColor="#fff" />
         </TableRow>
@@ -84,7 +128,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:layout_span="2"
+                android:layout_span="4"
                 android:background="@drawable/button_selector_white"
                 android:text="검색"
                 android:textColor="#000" />

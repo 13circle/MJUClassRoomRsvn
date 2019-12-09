@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -44,6 +45,9 @@ public class TimeTableActivity extends AppCompatActivity {
     MyFirebase fb;
     String key;
 
+    int init_hr;
+    int fin_hr;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,8 +64,11 @@ public class TimeTableActivity extends AppCompatActivity {
         ((Button)headerList.getChildAt(0)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(getApplicationContext(), searchActivity.class);
-                startActivity(intent);
+                Intent intent = new Intent(getApplicationContext(), searchActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("classRoomData", classRoomData);
+                intent.putExtras(bundle);
+                startActivityForResult(intent, 200);
             }
         });
         for(int i = 1; i < headerList.getChildCount(); i++) {
@@ -80,8 +87,8 @@ public class TimeTableActivity extends AppCompatActivity {
 
         time_table_banner.setText(classRoomData.getYear() + "년 " + (classRoomData.getMonth() + 1) + "월 " + classRoomData.getDate() + "일");
 
-        final int init_hr = 9;
-        final int fin_hr = 20;
+        init_hr = 9;
+        fin_hr = 20;
 
         prev_i = prev_j = 0; isAllSelected = false;
 
@@ -341,6 +348,7 @@ public class TimeTableActivity extends AppCompatActivity {
                             temp.setBackgroundResource(R.drawable.table_cell_background);
                         }
                     }
+
                     mRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -350,6 +358,47 @@ public class TimeTableActivity extends AppCompatActivity {
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) { }
                     });
+
+                    break;
+
+                case 200:
+
+                    classRoomData = (ClassRoomData)data.getSerializableExtra("classRoomData");
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            /*
+                            for(int i = 1, clen = numClassRoom + 1, hr = init_hr; hr < fin_hr; hr++, i++) {
+                                int[] tRange = parse_time_range_by_row_index(i);
+                                for(int j = 1; j < clen; j++) {
+                                    if(classRoomData.getStartTimeMsToHour() == tRange[0]
+                                    && classRoomData.getEndTimeMsToHour() == tRange[1]
+                                    && getCellFromTable(i, j).getText().toString().isEmpty()) {
+                                        getCellFromTable(i, j).
+                                    }
+                                }
+                            }*/
+                            int stHour = classRoomData.getStartTimeMsToHour();
+                            int endHour = classRoomData.getEndTimeMsToHour();
+                            boolean isClicked = true;
+                            for(int j = 1, clen = numClassRoom + 1; j < clen; j++) {
+                                TextView stTV = getCellFromTable(timeMap.get(stHour), j);
+                                TextView endTV = getCellFromTable(timeMap.get(endHour - 1), j);
+                                for(int i = timeMap.get(stHour); i <= timeMap.get(endHour) - 1; i++) {
+                                    if(!getCellFromTable(i, j).getText().toString().isEmpty()) {
+                                        Toast.makeText(getApplicationContext(), "해당 시간대에 예약할 수 있는 강의실이 없습니다.", Toast.LENGTH_SHORT).show();
+                                        isClicked = false;
+                                    }
+                                }
+                                if(isClicked) {
+                                    stTV.performClick();
+                                    endTV.performClick();
+                                    break;
+                                }
+                            }
+                        }
+                    }, 1000);
+
                     break;
             }
         } else if(resultCode == RESULT_CANCELED) {
@@ -362,6 +411,12 @@ public class TimeTableActivity extends AppCompatActivity {
                     prev_i = prev_j = 0;
                     isAllSelected = false;
                     findViewById(R.id.to_reservation).setVisibility(View.INVISIBLE);
+
+                    break;
+
+                case 200:
+
+                    Toast.makeText(getApplicationContext(), "검색이 취소되었습니다.", Toast.LENGTH_SHORT).show();
 
                     break;
             }
